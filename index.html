@@ -16,6 +16,7 @@
       --accent-sage-hover: #7A947E;
       --accent-terracotta: #D48C70;
       --accent-terracotta-hover: #C27A5E;
+      --accent-warm: #E6C79C;
     }
 
     * {
@@ -74,24 +75,15 @@
       color: var(--text-sub);
     }
 
-    /* 喝水主區塊：左側計時 ＋ 右側你的專屬小橘貓圖片 */
-    .water-main-box {
+    .water-display {
       display: flex;
-      align-items: stretch;
+      align-items: center;
       justify-content: space-between;
       background: var(--bg-input);
       border: 1px solid var(--border-soft);
-      border-radius: 14px;
-      padding: 12px 14px;
+      border-radius: 12px;
+      padding: 14px 16px;
       margin-bottom: 12px;
-      gap: 10px;
-    }
-
-    .water-timer-col {
-      display: flex;
-      flex-direction: column;
-      justify-content: space-between;
-      flex: 1;
     }
 
     .timer-big {
@@ -100,40 +92,6 @@
       font-variant-numeric: tabular-nums;
       letter-spacing: 1px;
       color: var(--text-main);
-      line-height: 1.1;
-      margin: 4px 0 8px 0;
-    }
-
-    .water-btn-row {
-      display: flex;
-      gap: 6px;
-      align-items: center;
-    }
-
-    /* 放入你上傳的貓咪圖片角落 */
-    .mini-cat-corner {
-      width: 110px;
-      height: 100px;
-      border-radius: 12px;
-      border: 1px solid var(--border-soft);
-      overflow: hidden;
-      flex-shrink: 0;
-      background: #FFFDF8;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
-
-    .mini-cat-corner img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-      animation: catBob 3s ease-in-out infinite alternate;
-    }
-
-    @keyframes catBob {
-      0% { transform: translateY(0px) scale(1); }
-      100% { transform: translateY(-3px) scale(1.03); }
     }
 
     .water-controls {
@@ -154,15 +112,21 @@
       outline: none;
     }
 
-    input:focus, select:focus { border-color: var(--accent-sage); }
-    .input-mini { width: 58px; text-align: center; }
+    input:focus, select:focus {
+      border-color: var(--accent-sage);
+    }
+
+    .input-mini {
+      width: 60px;
+      text-align: center;
+    }
 
     button {
       cursor: pointer;
       border: none;
       border-radius: 8px;
-      padding: 6px 12px;
-      font-size: 12.5px;
+      padding: 7px 14px;
+      font-size: 13px;
       font-weight: 500;
       transition: all 0.2s ease;
     }
@@ -179,11 +143,10 @@
       color: var(--text-sub);
     }
     .btn-ghost:hover {
-      background-color: var(--bg-page);
+      background-color: var(--bg-input);
       color: var(--text-main);
     }
 
-    /* 彈性任務區塊 */
     .add-task-box {
       background: var(--bg-input);
       border: 1px solid var(--border-soft);
@@ -195,10 +158,19 @@
       margin-bottom: 12px;
     }
 
-    .form-row { display: flex; gap: 8px; align-items: center; }
+    .form-row {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+    }
+
     .form-row input[type="text"] { flex: 1; }
 
-    .task-list { display: flex; flex-direction: column; gap: 8px; }
+    .task-list {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
 
     .task-item {
       background: var(--bg-input);
@@ -210,8 +182,18 @@
       gap: 8px;
     }
 
-    .task-top { display: flex; justify-content: space-between; align-items: center; }
-    .task-info { display: flex; flex-direction: column; gap: 2px; }
+    .task-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .task-info {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+
     .task-name {
       font-size: 14px;
       font-weight: 600;
@@ -235,7 +217,12 @@
       font-variant-numeric: tabular-nums;
     }
 
-    .task-actions { display: flex; align-items: center; gap: 6px; }
+    .task-actions {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
     .btn-icon {
       padding: 4px 8px;
       font-size: 12px;
@@ -243,7 +230,10 @@
       color: var(--text-sub);
       border-radius: 6px;
     }
-    .btn-icon:hover { background: #E5DFD7; color: var(--text-main); }
+    .btn-icon:hover {
+      background: #E5DFD7;
+      color: var(--text-main);
+    }
 
     .routine-adjust {
       display: flex;
@@ -260,136 +250,72 @@
     .overlay {
       position: fixed;
       inset: 0;
-      background: rgba(250, 248, 245, 0.96);
-      backdrop-filter: blur(5px);
+      background: rgba(250, 248, 245, 0.95);
+      backdrop-filter: blur(4px);
       display: none;
       flex-direction: column;
       align-items: center;
       justify-content: center;
       z-index: 100;
-      padding: 20px;
+      padding: 24px;
       text-align: center;
     }
 
-    .overlay.active { display: flex; animation: fadeIn 0.35s ease; }
-    @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+    .overlay.active {
+      display: flex;
+      animation: fadeIn 0.3s ease;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
 
     .overlay-title {
-      font-size: 19px;
+      font-size: 20px;
       font-weight: 700;
       margin-bottom: 6px;
       color: var(--text-main);
     }
 
     .overlay-sub {
-      font-size: 13.5px;
+      font-size: 14px;
       color: var(--text-sub);
-      margin-bottom: 16px;
-      min-height: 22px;
+      margin-bottom: 20px;
     }
 
-    /* ===== 劇場舞台：你的專屬小貓走近敲螢幕 -> 花盆出現 -> 澆水綻放 ===== */
-    .garden-stage {
-      width: 290px;
-      height: 220px;
-      background: linear-gradient(180deg, #FFFDF8 0%, #F7EFE0 76%, #E6DDD0 76%, #E6DDD0 100%);
+    /* 澆花動畫 */
+    .flower-stage {
+      width: 180px;
+      height: 180px;
+      background: var(--bg-card);
       border: 2px solid var(--border-soft);
-      border-radius: 24px;
+      border-radius: 50%;
       display: flex;
-      flex-direction: column;
       align-items: center;
       justify-content: center;
       cursor: pointer;
       position: relative;
-      overflow: hidden;
-      margin-bottom: 12px;
-      box-shadow: 0 10px 25px rgba(74, 70, 65, 0.08);
+      margin-bottom: 16px;
+      transition: transform 0.2s;
+    }
+    .flower-stage:hover { transform: scale(1.03); }
+
+    .water-drop { opacity: 0; transform: translateY(-15px); }
+    .watering .water-drop { animation: dropFall 0.7s ease-in forwards; }
+    @keyframes dropFall {
+      0% { opacity: 1; transform: translateY(-15px); }
+      70% { opacity: 1; transform: translateY(15px); }
+      100% { opacity: 0; transform: translateY(25px); }
     }
 
-    /* 提醒彈出時：你的小貓圖片會從旁邊走近、放大並上下跳動敲螢幕 */
-    .overlay-cat-img {
-      width: 120px;
-      height: 120px;
-      object-fit: cover;
-      border-radius: 50%;
-      box-shadow: 0 6px 16px rgba(0,0,0,0.12);
-      transition: all 0.8s ease;
-    }
-
-    .phase-knock .overlay-cat-img {
-      animation: catKnockAnim 0.6s ease-in-out infinite alternate;
-    }
-
-    @keyframes catKnockAnim {
-      0% { transform: scale(1.1) translateY(0) rotate(-4deg); }
-      100% { transform: scale(1.25) translateY(-12px) rotate(4deg); }
-    }
-
-    /* 花盆與植物（敲門階段隱藏，點擊回應後冒出） */
-    .flower-pot-container {
-      display: none;
-      align-items: center;
-      justify-content: center;
-      position: relative;
-      width: 100%;
-      height: 100%;
-    }
-
-    .phase-garden .overlay-cat-img {
-      width: 75px;
-      height: 75px;
-      position: absolute;
-      bottom: 15px;
-      right: 25px;
-      animation: catWatchWag 2.5s ease-in-out infinite alternate;
-    }
-
-    @keyframes catWatchWag {
-      0% { transform: translateY(0) rotate(-3deg); }
-      100% { transform: translateY(-4px) rotate(5deg); }
-    }
-
-    .phase-garden .flower-pot-container {
-      display: flex;
-      animation: popIn 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
-    }
-
-    @keyframes popIn {
-      0% { transform: scale(0.6); opacity: 0; }
-      100% { transform: scale(1); opacity: 1; }
-    }
-
-    /* 水滴 */
-    .water-drop { opacity: 0; transform: translateY(-20px); position: absolute; top: 30px; }
-    .phase-watering .water-drop {
-      animation: slowDropFall 1.2s cubic-bezier(0.4, 0, 0.2, 1) forwards;
-    }
-    @keyframes slowDropFall {
-      0% { opacity: 0; transform: translateY(-20px) scale(0.8); }
-      50% { opacity: 1; transform: translateY(0px) scale(1); }
-      100% { opacity: 0; transform: translateY(30px) scale(0.7); }
-    }
-
-    /* 花朵綻放 */
     .flower-head {
-      transform: scale(0.1);
-      opacity: 0;
-      transition: all 1.5s cubic-bezier(0.22, 1, 0.36, 1);
+      transform-origin: 90px 105px;
+      transform: scale(0.2);
+      opacity: 0.4;
+      transition: all 0.8s cubic-bezier(0.34, 1.56, 0.64, 1);
     }
-    .phase-bloomed .flower-head {
-      transform: scale(1);
-      opacity: 1;
-    }
-
-    /* Bling 閃亮星星 */
-    .sparkle { opacity: 0; }
-    .phase-bloomed .sparkle {
-      animation: blingTwinkle 1.5s ease-in-out infinite;
-    }
-    @keyframes blingTwinkle {
-      0%, 100% { opacity: 0; transform: scale(0.4); }
-      50% { opacity: 1; transform: scale(1.2); }
-    }
+    .bloomed .flower-head { transform: scale(1); opacity: 1; }
 
     /* 旋風奔跑小人動畫 */
     .runner-stage {
@@ -408,7 +334,9 @@
       margin-bottom: 16px;
     }
 
-    .runner-svg { animation: runBodyBounce 0.22s infinite alternate ease-in-out; }
+    .runner-svg {
+      animation: runBodyBounce 0.22s infinite alternate ease-in-out;
+    }
     @keyframes runBodyBounce {
       0% { transform: translateY(1px) rotate(-4deg); }
       100% { transform: translateY(-6px) rotate(4deg); }
@@ -424,7 +352,12 @@
       100% { transform: rotate(360deg) scale(0.95); }
     }
 
-    .speed-lines { position: absolute; width: 100%; height: 100%; pointer-events: none; }
+    .speed-lines {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+    }
     .speed-line {
       stroke: var(--text-sub);
       stroke-width: 2;
@@ -443,32 +376,30 @@
       transform: translateY(0) scale(1.1);
       transition: transform 0.3s ease;
     }
-    .runner-finished .cyclone-wheel { animation: none; opacity: 0.3; }
+    .runner-finished .cyclone-wheel {
+      animation: none;
+      opacity: 0.3;
+    }
   </style>
 </head>
 <body>
 
   <div class="widget-container">
-    <!-- 區塊一：固定喝水輪播（右側嵌入你的專屬小橘貓圖片） -->
+    <!-- 區塊一：固定喝水輪播 -->
     <div class="card">
       <div class="card-header">
         <div class="card-title">💧 喝水療癒輪播</div>
         <div class="badge">今日開花：<span id="flowerCount">0</span> 朵 🌸</div>
       </div>
 
-      <div class="water-main-box">
-        <div class="water-timer-col">
-          <div style="font-size: 12px; color: var(--text-sub);">距離下次喝水</div>
+      <div class="water-display">
+        <div>
+          <div style="font-size: 12px; color: var(--text-sub); margin-bottom: 2px;">距離下次喝水</div>
           <div class="timer-big" id="waterTimerDisplay">45:00</div>
-          <div class="water-btn-row">
-            <button class="btn-sage" id="waterToggleBtn" onclick="toggleWater()">啟動輪播</button>
-            <button class="btn-ghost" onclick="testWaterOverlay()">試看提醒</button>
-          </div>
         </div>
-
-        <!-- 這裡讀取你上傳的貓咪圖片 (請確保檔名為 cat-fish.png，或依實際檔名修改) -->
-        <div class="mini-cat-corner" title="小橘貓正在陪你倒數">
-          <img src="cat-fish.png" alt="小橘貓" onerror="this.src='https://images.unsplash.com/photo-1543852786-1cf6624b9987?w=150&auto=format&fit=crop&q=80'" />
+        <div style="display: flex; flex-direction: column; gap: 6px; align-items: flex-end;">
+          <button class="btn-sage" id="waterToggleBtn" onclick="toggleWater()">啟動輪播</button>
+          <button class="btn-ghost" style="padding: 4px 10px; font-size: 11px;" onclick="testWaterOverlay()">試看澆花</button>
         </div>
       </div>
 
@@ -512,46 +443,31 @@
     </div>
   </div>
 
-  <!-- 互動遮罩 1：貓咪敲螢幕 -> 點擊後出現花盆綻放 -->
+  <!-- 互動遮罩 1：喝水澆花動畫 -->
   <div class="overlay" id="waterOverlay">
-    <div class="overlay-title" id="overlayTitle">🐱 叩、叩、叩！</div>
-    <div class="overlay-sub" id="waterOverlaySub">小橘貓走過來敲敲螢幕叫你喝水囉！點一下畫面回應牠</div>
+    <div class="overlay-title">💧 該喝口水休息一下囉！</div>
+    <div class="overlay-sub" id="waterOverlaySub">點擊下方小花盆，幫它澆水開花吧</div>
     
-    <div class="garden-stage phase-knock" id="gardenStage" onclick="triggerWatering()">
-      <!-- 階段一：只有你的貓咪在畫面中央敲敲敲 -->
-      <img src="cat-fish.png" class="overlay-cat-img" alt="敲門貓貓" onerror="this.src='https://images.unsplash.com/photo-1543852786-1cf6624b9987?w=150&auto=format&fit=crop&q=80'" />
-
-      <!-- 階段二之後才出現的花盆與開花容器 -->
-      <div class="flower-pot-container">
-        <svg width="220" height="180" viewBox="0 0 220 180" style="position: absolute;">
-          <!-- 花盆 -->
-          <polygon points="75,120 145,120 135,160 85,160" fill="#D48C70" />
-          <rect x="70" y="112" width="80" height="9" rx="4.5" fill="#C27A5E" />
-          <!-- 莖與葉 -->
-          <path d="M110,112 Q108,85 110,60" stroke="#7A947E" stroke-width="4.5" fill="none" stroke-linecap="round" />
-          <path d="M110,95 Q88,88 85,98 Q95,105 110,98" fill="#8FA893" />
-          <path d="M110,82 Q132,75 135,85 Q125,92 110,85" fill="#8FA893" />
-
-          <!-- 盛開的大花朵 -->
-          <g class="flower-head" transform="translate(110, 52)">
-            <circle cx="0" cy="0" r="15" fill="#F4D3AB" />
-            <circle cx="-18" cy="12" r="15" fill="#F4D3AB" />
-            <circle cx="18" cy="12" r="15" fill="#F4D3AB" />
-            <circle cx="-12" cy="28" r="15" fill="#F4D3AB" />
-            <circle cx="12" cy="28" r="15" fill="#F4D3AB" />
-            <circle cx="0" cy="14" r="12" fill="#E8A55A" />
-          </g>
-
-          <!-- Bling 閃亮星芒 -->
-          <g fill="#F2B84B">
-            <path class="sparkle sparkle-1" d="M60,40 L63,48 L71,51 L63,54 L60,62 L57,54 L49,51 L57,48 Z" style="animation-delay: 0.2s;" />
-            <path class="sparkle sparkle-2" d="M160,35 L163,43 L171,46 L163,49 L160,57 L157,49 L149,46 L157,43 Z" style="animation-delay: 0.7s;" />
-          </g>
-        </svg>
-
-        <!-- 緩慢落下的水滴 -->
-        <div class="water-drop">💧</div>
-      </div>
+    <div class="flower-stage" id="flowerStage" onclick="triggerWatering()">
+      <svg width="160" height="160" viewBox="0 0 180 180">
+        <polygon points="65,125 115,125 108,160 72,160" fill="#D48C70" />
+        <rect x="60" y="118" width="60" height="8" rx="4" fill="#C27A5E" />
+        <path d="M90,118 Q88,95 90,75" stroke="#7A947E" stroke-width="4" fill="none" stroke-linecap="round" />
+        <path d="M90,102 Q72,95 70,105 Q78,112 90,105" fill="#8FA893" />
+        <path d="M90,94 Q108,87 110,97 Q102,104 90,97" fill="#8FA893" />
+        <g class="water-drop">
+          <path d="M75,35 Q75,45 70,45 Q65,45 65,35 Q70,25 75,35 Z" fill="#7FB3D5" />
+          <path d="M110,42 Q110,52 105,52 Q100,52 100,42 Q105,32 110,42 Z" fill="#7FB3D5" />
+        </g>
+        <g class="flower-head">
+          <circle cx="90" cy="55" r="14" fill="#F2D0A9" />
+          <circle cx="74" cy="68" r="14" fill="#F2D0A9" />
+          <circle cx="106" cy="68" r="14" fill="#F2D0A9" />
+          <circle cx="80" cy="84" r="14" fill="#F2D0A9" />
+          <circle cx="100" cy="84" r="14" fill="#F2D0A9" />
+          <circle cx="90" cy="71" r="11" fill="#E6A15C" />
+        </g>
+      </svg>
     </div>
   </div>
 
@@ -584,7 +500,7 @@
   </div>
 
   <script>
-    // ====== 音效系統 ======
+    // ====== 持續循環提醒音效系統 ======
     let audioCtx = null;
     let chimeIntervalTimer = null;
 
@@ -628,31 +544,6 @@
       }
     }
 
-    function playBlingBlingSound() {
-      try {
-        unlockAudio();
-        const notes = [1046.50, 1318.51, 1567.98, 1975.53, 2349.32, 2637.02];
-        notes.forEach((freq, idx) => {
-          const startTime = audioCtx.currentTime + idx * 0.16;
-          const osc = audioCtx.createOscillator();
-          const gain = audioCtx.createGain();
-          osc.type = 'sine';
-          osc.frequency.setValueAtTime(freq, startTime);
-
-          gain.gain.setValueAtTime(0.001, startTime);
-          gain.gain.linearRampToValueAtTime(0.14, startTime + 0.03);
-          gain.gain.exponentialRampToValueAtTime(0.0008, startTime + 0.85);
-
-          osc.connect(gain);
-          gain.connect(audioCtx.destination);
-          osc.start(startTime);
-          osc.stop(startTime + 0.9);
-        });
-      } catch (e) {
-        console.log('Bling音效播放略過');
-      }
-    }
-
     function startContinuousChime(type) {
       stopContinuousChime();
       playSingleChime(type);
@@ -670,7 +561,7 @@
 
     // ====== 資料與狀態管理 ======
     const TODAY_KEY = new Date().toDateString();
-    let state = JSON.parse(localStorage.getItem('notion_healing_widget_v5')) || {
+    let state = JSON.parse(localStorage.getItem('notion_healing_widget_v2')) || {
       waterInterval: 45,
       flowerDate: TODAY_KEY,
       flowerCount: 0,
@@ -694,7 +585,7 @@
     }
 
     function saveState() {
-      localStorage.setItem('notion_healing_widget_v5', JSON.stringify(state));
+      localStorage.setItem('notion_healing_widget_v2', JSON.stringify(state));
     }
 
     function computeTargetFromTimeStr(timeStr) {
@@ -746,7 +637,7 @@
       }
     }
 
-    // ====== 喝水輪播與貓咪劇場 ======
+    // ====== 喝水輪播邏輯 ======
     let waterRunning = false;
     let waterRemainingSec = state.waterInterval * 60;
 
@@ -790,11 +681,9 @@
 
     function showWaterOverlayModal() {
       startContinuousChime('water');
-      const stage = document.getElementById('gardenStage');
-      stage.className = 'garden-stage phase-knock';
-      
-      document.getElementById('overlayTitle').textContent = '🐱 叩、叩、叩！';
-      document.getElementById('waterOverlaySub').textContent = '小橘貓走過來敲敲螢幕叫你喝水囉！點一下畫面回應牠';
+      const stage = document.getElementById('flowerStage');
+      stage.classList.remove('watering', 'bloomed');
+      document.getElementById('waterOverlaySub').textContent = '點擊下方小花盆，幫它澆水開花吧';
       document.getElementById('waterOverlay').classList.add('active');
     }
 
@@ -804,33 +693,18 @@
       isWateringAnimating = true;
       stopContinuousChime();
 
-      const stage = document.getElementById('gardenStage');
-      const subText = document.getElementById('waterOverlaySub');
-      const titleText = document.getElementById('overlayTitle');
+      const stage = document.getElementById('flowerStage');
+      stage.classList.add('watering');
+      document.getElementById('waterOverlaySub').textContent = '咕嚕咕嚕～小花正在吸收水分...';
 
-      // 階段二：貓咪退到旁邊，花盆與花苞冒出來
-      stage.className = 'garden-stage phase-garden';
-      titleText.textContent = '🌱 小花盆出現了！';
-      subText.textContent = '小貓在旁邊開心地看著...';
-
-      // 階段三：水滴落下
       setTimeout(() => {
-        stage.classList.add('phase-watering');
-        subText.textContent = '💧 清水慢慢滋潤土壤，你也喝口水吧～';
-      }, 1100);
-
-      // 階段四：花朵綻放 ＋ Bling 音效
-      setTimeout(() => {
-        stage.classList.add('phase-bloomed');
-        playBlingBlingSound();
-        titleText.textContent = '🌸✨ 開花囉！';
-        subText.textContent = '小橘貓陪你一起欣賞美麗的花朵！';
+        stage.classList.add('bloomed');
+        document.getElementById('waterOverlaySub').textContent = '🌸 開花了！';
         state.flowerCount += 1;
         document.getElementById('flowerCount').textContent = state.flowerCount;
         saveState();
-      }, 2500);
+      }, 650);
 
-      // 階段五：回到主畫面
       setTimeout(() => {
         document.getElementById('waterOverlay').classList.remove('active');
         waterRemainingSec = state.waterInterval * 60;
@@ -838,7 +712,7 @@
         isWateringAnimating = false;
         currentAlert = null;
         processQueue();
-      }, 5800);
+      }, 1800);
     }
 
     // ====== 彈性任務邏輯 ======
