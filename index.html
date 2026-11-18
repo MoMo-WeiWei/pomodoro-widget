@@ -776,7 +776,7 @@
 
       <div class="add-task-box">
         <div class="form-row">
-          <input type="text" id="taskNameInput" placeholder="輸入事項（例：訂餐廳、採購清單）" />
+          <input type="text" id="taskNameInput" placeholder="輸入事項（例：晾衣服、買票、訂餐廳、購物清單）" />
         </div>
         <div class="form-row">
           <select id="taskModeSelect" onchange="toggleTimeInputMode()">
@@ -796,7 +796,7 @@
             <option value="routine">🔁 例行公事 (完成後保留)</option>
             <option value="once">⚡ 一次性任務 (完成後自動消失)</option>
           </select>
-          <button class="btn-terracotta" onclick="addTask()">+ 加入任務</button>
+          <button class="btn-terracotta" onclick="addTask()">+</button>
         </div>
       </div>
 
@@ -816,15 +816,15 @@
     <!-- 區塊三：夜間複盤紀錄抽屜 -->
     <div class="reflection-card" id="reflectionCard">
       <div class="reflection-header" onclick="toggleReflectionDrawer()">
-        <div class="card-title" style="margin-bottom:0;">🌙 今日已完成任務（複盤專用）</div>
-        <div class="badge" id="logCountBadge">0 項已完成</div>
+        <div class="card-title" style="margin-bottom:0;">🌙 今日已完成任務</div>
+        <div class="badge" id="logCountBadge">0 項完成</div>
       </div>
       <div class="reflection-content">
-        <div style="font-size: 12px; color: var(--text-sub);">晚上寫 Notion 複盤時，可直接複製以下完成紀錄：</div>
+        <div style="font-size: 12px; color: var(--text-sub);">晚上寫 Notion 復盤時，可直接複製以下完成紀錄：</div>
         <div class="log-list" id="logList">
           <div style="text-align: center; color: var(--text-sub); font-size: 12px; padding: 10px;">今天還沒有完成的任務喔！加油～</div>
         </div>
-        <button class="btn-copy" onclick="copyLogsForNotion()">📋 一鍵複製複盤格式</button>
+        <button class="btn-copy" onclick="copyLogsForNotion()">📋 一鍵複製</button>
       </div>
     </div>
   </div>
@@ -832,7 +832,7 @@
   <!-- 互動遮罩 1：貓咪敲螢幕（喝水提醒） -->
   <div class="overlay" id="waterOverlay">
     <div class="overlay-title" id="overlayTitle">🐱 叩、叩、叩！</div>
-    <div class="overlay-sub" id="waterOverlaySub">小橘貓走過來敲敲螢幕叫你喝水囉！點一下畫面回應牠</div>
+    <div class="overlay-sub" id="waterOverlaySub">小橘貓來敲螢幕叫你喝水囉！點一下畫面回應牠</div>
     
     <div class="garden-stage phase-knock" id="gardenStage" onclick="triggerWatering()">
       <svg width="290" height="210" viewBox="0 0 290 210">
@@ -960,25 +960,25 @@
     </div>
 
     <div class="alert-custom-box">
-      <span style="font-size: 12px; color: var(--text-sub);">改期：</span>
+      <span style="font-size: 12px; color: var(--text-sub);">改：</span>
       <input type="date" id="alertCustomDate" style="padding: 3px 6px; font-size: 12px;" />
       <input type="time" id="alertCustomTime" value="12:00" style="padding: 3px 6px; font-size: 12px;" />
-      <button class="btn-sage" style="padding: 4px 10px; font-size: 12px;" onclick="postponeTaskDateTime()">確認改期</button>
+      <button class="btn-sage" style="padding: 4px 10px; font-size: 12px;" onclick="postponeTaskDateTime()">✔</button>
     </div>
   </div>
 
   <script>
     const energyQuotes = [
-      "🌸 溫馨：喝口水，深呼吸，你已經做得比想像中還要好了。",
-      "🔥 勵志：乾掉這杯水，宇宙的奧祕就由你來解開！",
-      "🐱 可愛：本貓批准你休息三分鐘，趕快乖乖喝水！",
-      "🤪 搞笑：多喝水能讓腦子裡的裝水率下降，維持清醒（？）",
-      "⚡ 中二：區區地心引力和疲勞，休想封印本大人的無敵覺醒之力！",
-      "☕ 溫馨：世間萬物皆苦，但你的水是甜的（記得加糖或多喝兩口）。",
-      "🚀 勵志：今日的偷懶是為了明日更好的躺平，先喝水再說！",
-      "🐾 可愛：小橘貓用肉球跟你打勾勾，要記得照顧好自己喔～",
-      "🤡 搞笑：只要我喝水夠快，截止線就追不上我！",
-      "🌌 中二：沉睡的能量核心啊，藉由清澈的水流解開這道封印吧！"
+      "🌸：喝口水，深呼吸，你已經做得比想像中還要好了。",
+      "🔥：乾掉這杯水，宇宙的奧祕就由你來解開！",
+      "🐱：本貓批准你休息三分鐘，趕快乖乖喝水！",
+      "🤪：多喝水能讓腦子裡的裝水率下降，維持清醒（？）",
+      "⚡：區區地心引力和疲勞，休想封印本大人的無敵覺醒之力！",
+      "☕：世間萬物皆苦，但你的水是甜的（記得加糖或多喝兩口）。",
+      "🚀：今日的偷懶是為了明日更好的躺平，先喝水再說！",
+      "🐾：小橘貓用肉球跟你打勾勾，要記得照顧好自己喔～",
+      "🤡：只要我喝水夠快，截止線就追不上我！",
+      "🌌：沉睡的能量核心啊，藉由清澈的水流解開這道封印吧！"
     ];
 
     function getRandomQuote() {
@@ -1243,7 +1243,7 @@
 
       setTimeout(() => {
         stage.classList.add('phase-watering');
-        subText.textContent = '💧 清水緩緩滋潤土壤，給自己充個電吧～';
+        subText.textContent = '💧 清水緩緩滋潤土壤，快去喝口水充個電吧～';
       }, 1400);
 
       setTimeout(() => {
@@ -1538,7 +1538,7 @@
       const newTime = document.getElementById('alertCustomTime').value;
 
       if (!newDate) {
-        alert('請選擇要延期到的目標日期喔！');
+        alert('請選擇要延期到的日期喔！');
         return;
       }
 
@@ -1606,7 +1606,7 @@
         alert('目前還沒有完成的任務可以複製喔！');
         return;
       }
-      let textToCopy = `【今日完成任務複盤】\n`;
+      let textToCopy = `【今日完成任務】\n`;
       state.completedLogs.forEach(log => {
         textToCopy += `- [x] ${log.name} (${log.time})\n`;
         if (log.subtasks && log.subtasks.length > 0) {
@@ -1624,7 +1624,7 @@
       });
       
       navigator.clipboard.writeText(textToCopy).then(() => {
-        alert('✅ 已複製複盤格式！可以直接貼到 Notion 中。');
+        alert('✅ 已複製！可以直接貼到 Notion 中。');
       }).catch(err => {
         console.error('複製失敗', err);
       });
@@ -1634,7 +1634,7 @@
       const logListEl = document.getElementById('logList');
       const logCountBadge = document.getElementById('logCountBadge');
       logListEl.innerHTML = '';
-      logCountBadge.textContent = `${state.completedLogs.length} 項已完成`;
+      logCountBadge.textContent = `${state.completedLogs.length} 項完成`;
 
       if (state.completedLogs.length === 0) {
         logListEl.innerHTML = `<div style="text-align: center; color: var(--text-sub); font-size: 12px; padding: 10px;">今天還沒有完成的任務喔！加油～</div>`;
@@ -1752,7 +1752,7 @@
             childrenHtml += `
               <div class="nested-row">
                 <input type="checkbox" ${child.done ? 'checked' : ''} onclick="toggleChildCheck('${task.id}', ${sIdx}, ${cIdx})" />
-                <input type="text" value="${child.text}" oninput="updateChildText('${task.id}', ${sIdx}, ${cIdx}, this.value)" placeholder="輸入子條件或細節..." />
+                <input type="text" value="${child.text}" oninput="updateChildText('${task.id}', ${sIdx}, ${cIdx}, this.value)" placeholder="輸入細節..." />
                 <button class="btn-icon" style="padding: 1px 4px; font-size: 10px;" onclick="deleteChildSubtask('${task.id}', ${sIdx}, ${cIdx})">✕</button>
               </div>
             `;
@@ -1762,7 +1762,7 @@
             <div class="subtask-card">
               <div class="subtask-main-row">
                 <input type="checkbox" ${sub.done ? 'checked' : ''} onclick="toggleSubtaskCheck('${task.id}', ${sIdx})" />
-                <input type="text" value="${sub.text}" oninput="updateSubtaskText('${task.id}', ${sIdx}, this.value)" placeholder="輸入大分類（例：A 餐廳）..." />
+                <input type="text" value="${sub.text}" oninput="updateSubtaskText('${task.id}', ${sIdx}, this.value)" placeholder="輸入大分類（例：A/B 餐廳、採買品項）..." />
                 <button class="btn-icon" style="padding: 2px 6px; font-size: 11px;" onclick="deleteSubtask('${task.id}', ${sIdx})">✕</button>
               </div>
               <div class="nested-children-box">
