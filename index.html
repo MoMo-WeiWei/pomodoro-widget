@@ -152,7 +152,7 @@
       color: var(--text-sub);
     }
 
-    input[type="number"], input[type="text"], input[type="time"], select {
+    input[type="number"], input[type="text"], input[type="time"], input[type="date"], select {
       background: var(--bg-input);
       border: 1px solid var(--border-soft);
       border-radius: 8px;
@@ -225,6 +225,7 @@
       display: flex;
       align-items: center;
       gap: 6px;
+      flex-wrap: wrap;
     }
 
     .tag-routine {
@@ -236,13 +237,22 @@
       font-weight: 500;
     }
 
+    .tag-future {
+      font-size: 11px;
+      background: #E6EEF4;
+      color: #4A7A96;
+      padding: 2px 6px;
+      border-radius: 6px;
+      font-weight: 500;
+    }
+
     .task-countdown {
       font-size: 12px;
       color: var(--text-sub);
       font-variant-numeric: tabular-nums;
     }
 
-    .task-actions { display: flex; align-items: center; gap: 6px; }
+    .task-actions { display: flex; align-items: center; gap: 5px; flex-shrink: 0; }
     .btn-icon {
       padding: 4px 8px;
       font-size: 12px;
@@ -252,18 +262,52 @@
     }
     .btn-icon:hover { background: #E5DFD7; color: var(--text-main); }
 
-    .routine-adjust {
+    .routine-adjust, .edit-panel {
       display: flex;
-      align-items: center;
-      justify-content: space-between;
+      flex-direction: column;
+      gap: 8px;
       background: var(--bg-page);
-      padding: 6px 10px;
+      padding: 8px 10px;
       border-radius: 8px;
       font-size: 12px;
       color: var(--text-sub);
+      border: 1px dashed var(--border-soft);
     }
 
-    /* ===== 夜間複盤紀錄抽屜樣式 ===== */
+    .edit-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 6px;
+      flex-wrap: wrap;
+    }
+
+    /* 未來預排任務專用折疊區塊 */
+    .future-section {
+      margin-top: 12px;
+      border-top: 1px dashed var(--border-soft);
+      padding-top: 10px;
+    }
+    .future-toggle-header {
+      font-size: 12.5px;
+      color: var(--text-sub);
+      cursor: pointer;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      user-select: none;
+    }
+    .future-list {
+      display: none;
+      flex-direction: column;
+      gap: 6px;
+      margin-top: 8px;
+    }
+    .future-section.expanded .future-list {
+      display: flex;
+    }
+
+    /* 夜間複盤紀錄抽屜 */
     .reflection-card {
       background-color: var(--bg-card);
       border: 1px solid var(--border-soft);
@@ -596,7 +640,7 @@
       </div>
     </div>
 
-    <!-- 區塊二：彈性提醒任務清單 -->
+    <!-- 區塊二：彈性提醒任務清單（支援預排未來日期與隨時改期） -->
     <div class="card">
       <div class="card-header">
         <div class="card-title">🏃 彈性事項提醒</div>
@@ -605,7 +649,7 @@
 
       <div class="add-task-box">
         <div class="form-row">
-          <input type="text" id="taskNameInput" placeholder="輸入事項（例：訂午餐、收衣服）" />
+          <input type="text" id="taskNameInput" placeholder="輸入事項（例：週五交報告、採買）" />
         </div>
         <div class="form-row">
           <select id="taskModeSelect" onchange="toggleTimeInputMode()">
@@ -616,16 +660,30 @@
           <input type="number" id="taskMinutesInput" value="30" min="1" max="720" style="display: none; width: 75px;" />
           <span id="minuteLabel" style="display: none; font-size: 12px; color: var(--text-sub);">分鐘</span>
         </div>
+        <div class="form-row">
+          <span style="font-size: 12px; color: var(--text-sub);">執行日期：</span>
+          <input type="date" id="taskDateInput" style="flex:1;" />
+        </div>
         <div class="form-row" style="justify-content: space-between;">
           <select id="taskTypeSelect">
-            <option value="routine">🔁 例行公事 (完成後保留，可調時間)</option>
+            <option value="routine">🔁 例行公事 (完成後保留)</option>
             <option value="once">⚡ 一次性任務 (完成後自動消失)</option>
           </select>
-          <button class="btn-terracotta" onclick="addTask()">+</button>
+          <button class="btn-terracotta" onclick="addTask()">+ 加入任務</button>
         </div>
       </div>
 
+      <!-- 今日任務清單 -->
       <div class="task-list" id="taskList"></div>
+
+      <!-- 未來預排任務收納區 -->
+      <div class="future-section" id="futureSection">
+        <div class="future-toggle-header" onclick="toggleFutureDrawer()">
+          <span id="futureHeaderTitle">🔮 未來預排任務 (0 項)</span>
+          <span>▼ 展開 / 調整</span>
+        </div>
+        <div class="future-list" id="futureList"></div>
+      </div>
     </div>
 
     <!-- 區塊三：夜間複盤紀錄抽屜 -->
@@ -862,13 +920,23 @@
       }
     }
 
-    // ====== 資料與狀態管理 (支援跨日自動清空與複盤紀錄) ======
-    const TODAY_KEY = new Date().toDateString();
-    let state = JSON.parse(localStorage.getItem('notion_healing_widget_v7')) || {
+    // ====== 日期格式化與狀態管理 ======
+    function getTodayDateString() {
+      const d = new Date();
+      const year = d.getFullYear();
+      const month = String(d.getMonth() + 1).padStart(2, '0');
+      const day = String(d.getDate()).padStart(2, '0');
+      return `${year}-${month}-${day}`;
+    }
+
+    const todayStr = getTodayDateString();
+    document.getElementById('taskDateInput').value = todayStr;
+
+    let state = JSON.parse(localStorage.getItem('notion_healing_widget_v9')) || {
       waterInterval: 45,
-      flowerDate: TODAY_KEY,
+      flowerDate: todayStr,
       flowerCount: 0,
-      logDate: TODAY_KEY,
+      logDate: todayStr,
       completedLogs: [],
       tasks: [
         {
@@ -877,6 +945,7 @@
           mode: 'time',
           timeStr: '11:30',
           minutes: 30,
+          dateStr: todayStr,
           type: 'routine',
           status: 'running',
           targetTimestamp: null
@@ -884,33 +953,34 @@
       ]
     };
 
-    // 跨日自動重置檢查 (換了一天就自動清空昨天的完成紀錄與花朵數)
-    if (state.flowerDate !== TODAY_KEY || state.logDate !== TODAY_KEY) {
-      state.flowerDate = TODAY_KEY;
-      state.logDate = TODAY_KEY;
+    if (state.flowerDate !== todayStr || state.logDate !== todayStr) {
+      state.flowerDate = todayStr;
+      state.logDate = todayStr;
       state.flowerCount = 0;
       state.completedLogs = [];
     }
 
     function saveState() {
-      localStorage.setItem('notion_healing_widget_v7', JSON.stringify(state));
+      localStorage.setItem('notion_healing_widget_v9', JSON.stringify(state));
     }
 
-    function computeTargetFromTimeStr(timeStr) {
-      const [hh, mm] = timeStr.split(':').map(Number);
+    function computeTargetFromTask(task) {
       const target = new Date();
-      target.setHours(hh, mm, 0, 0);
-      if (target.getTime() <= Date.now()) {
-        target.setDate(target.getDate() + 1);
+      if (task.mode === 'time') {
+        const [hh, mm] = task.timeStr.split(':').map(Number);
+        const [yy, mo, dd] = task.dateStr.split('-').map(Number);
+        target.setFullYear(yy, mo - 1, dd);
+        target.setHours(hh, mm, 0, 0);
+      } else {
+        target.setTime(Date.now() + task.minutes * 60000);
       }
       return target.getTime();
     }
 
     state.tasks.forEach(t => {
+      if (!t.dateStr) t.dateStr = todayStr;
       if (t.status === 'running' && !t.targetTimestamp) {
-        t.targetTimestamp = t.mode === 'time'
-          ? computeTargetFromTimeStr(t.timeStr)
-          : Date.now() + t.minutes * 60000;
+        t.targetTimestamp = computeTargetFromTask(t);
       }
     });
     saveState();
@@ -1037,9 +1107,49 @@
       }, 8000);
     }
 
-    // ====== 彈性任務與複盤紀錄抽屜邏輯 ======
+    // ====== 彈性任務、隨時改期與未來預排管理 ======
+    let editingTaskId = null;
+
+    function toggleEditTask(id) {
+      editingTaskId = (editingTaskId === id) ? null : id;
+      renderTasks();
+    }
+
+    function saveTaskEdit(id) {
+      unlockAudio();
+      const task = state.tasks.find(t => t.id === id);
+      if (!task) return;
+
+      const newDate = document.getElementById(`edit-date-${id}`).value;
+      if (newDate) task.dateStr = newDate;
+
+      if (task.mode === 'time') {
+        const newTime = document.getElementById(`edit-time-${id}`).value;
+        if (newTime) task.timeStr = newTime;
+      } else {
+        const newMin = parseInt(document.getElementById(`edit-min-${id}`).value, 10);
+        if (newMin && newMin > 0) task.minutes = newMin;
+      }
+
+      task.status = 'running';
+      task.targetTimestamp = computeTargetFromTask(task);
+      editingTaskId = null;
+
+      // 如果改到未來日期，自動幫使用者展開未來預排區方便確認
+      if (task.dateStr > getTodayDateString()) {
+        document.getElementById('futureSection').classList.add('expanded');
+      }
+
+      saveState();
+      renderTasks();
+    }
+
     function toggleReflectionDrawer() {
       document.getElementById('reflectionCard').classList.toggle('expanded');
+    }
+
+    function toggleFutureDrawer() {
+      document.getElementById('futureSection').classList.toggle('expanded');
     }
 
     function toggleTimeInputMode() {
@@ -1063,24 +1173,31 @@
       const mode = document.getElementById('taskModeSelect').value;
       const timeStr = document.getElementById('taskTimeInput').value || '12:00';
       const minutes = parseInt(document.getElementById('taskMinutesInput').value, 10) || 30;
+      const dateStr = document.getElementById('taskDateInput').value || getTodayDateString();
       const type = document.getElementById('taskTypeSelect').value;
 
-      const targetTimestamp = mode === 'time'
-        ? computeTargetFromTimeStr(timeStr)
-        : Date.now() + minutes * 60000;
-
-      state.tasks.push({
+      const newTask = {
         id: 'task-' + Date.now(),
         name,
         mode,
         timeStr,
         minutes,
+        dateStr,
         type,
         status: 'running',
-        targetTimestamp
-      });
+        targetTimestamp: null
+      };
 
+      newTask.targetTimestamp = computeTargetFromTask(newTask);
+
+      state.tasks.push(newTask);
       document.getElementById('taskNameInput').value = '';
+      document.getElementById('taskDateInput').value = getTodayDateString();
+
+      if (dateStr > getTodayDateString()) {
+        document.getElementById('futureSection').classList.add('expanded');
+      }
+
       saveState();
       renderTasks();
     }
@@ -1096,16 +1213,18 @@
       const task = state.tasks.find(t => t.id === id);
       if (!task) return;
 
+      const dateInputEl = document.getElementById(`adjust-date-${id}`);
+      task.dateStr = (dateInputEl && dateInputEl.value) ? dateInputEl.value : getTodayDateString();
+
       if (task.mode === 'time') {
         const inputEl = document.getElementById(`adjust-time-${id}`);
         if (inputEl && inputEl.value) task.timeStr = inputEl.value;
-        task.targetTimestamp = computeTargetFromTimeStr(task.timeStr);
       } else {
         const inputEl = document.getElementById(`adjust-min-${id}`);
         if (inputEl && inputEl.value) task.minutes = parseInt(inputEl.value, 10) || 30;
-        task.targetTimestamp = Date.now() + task.minutes * 60000;
       }
 
+      task.targetTimestamp = computeTargetFromTask(task);
       task.status = 'running';
       saveState();
       renderTasks();
@@ -1136,9 +1255,8 @@
       const idx = state.tasks.findIndex(t => t.id === taskToComplete.id);
       if (idx !== -1) {
         const task = state.tasks[idx];
-        
-        // 記錄到複盤暫存清單中
         const nowTime = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+        
         state.completedLogs.push({
           name: task.name,
           time: nowTime,
@@ -1184,7 +1302,6 @@
       const logListEl = document.getElementById('logList');
       const logCountBadge = document.getElementById('logCountBadge');
       logListEl.innerHTML = '';
-
       logCountBadge.textContent = `${state.completedLogs.length} 項已完成`;
 
       if (state.completedLogs.length === 0) {
@@ -1213,70 +1330,126 @@
       return `還有 ${m} 分 ${s.toString().padStart(2, '0')} 秒`;
     }
 
-    function renderTasks() {
-      const listEl = document.getElementById('taskList');
-      listEl.innerHTML = '';
-      const now = Date.now();
-      let runningCount = 0;
+    // 產生通用的編輯改期面板 HTML
+    function buildEditPanelHtml(task) {
+      if (editingTaskId !== task.id) return '';
+      const timeControl = task.mode === 'time'
+        ? `<input type="time" id="edit-time-${task.id}" value="${task.timeStr}" style="padding: 3px 6px; font-size: 12px;" />`
+        : `<input type="number" id="edit-min-${task.id}" value="${task.minutes}" min="1" style="width: 55px; padding: 3px 6px; font-size: 12px;" /> 分鐘`;
 
-      state.tasks.forEach(task => {
-        if (task.status === 'running') runningCount++;
-
-        const item = document.createElement('div');
-        item.className = 'task-item';
-
-        const typeBadge = task.type === 'routine'
-          ? '<span class="tag-routine">🔁 例行</span>'
-          : '<span class="tag-routine">⚡ 單次</span>';
-
-        const scheduleDesc = task.mode === 'time'
-          ? `目標 ${task.timeStr}`
-          : `每 ${task.minutes} 分鐘`;
-
-        let statusText = '';
-        if (task.status === 'running') {
-          statusText = `${scheduleDesc} ・ ${formatRemaining(task.targetTimestamp - now)}`;
-        } else {
-          statusText = `已完成本輪（可調整下方時間並重新啟動）`;
-        }
-
-        let adjustHtml = '';
-        if (task.status === 'standby' && task.type === 'routine') {
-          const inputControl = task.mode === 'time'
-            ? `<input type="time" id="adjust-time-${task.id}" value="${task.timeStr}" style="padding: 3px 6px; font-size: 12px;" />`
-            : `<input type="number" id="adjust-min-${task.id}" value="${task.minutes}" min="1" style="width: 55px; padding: 3px 6px; font-size: 12px;" /> 分鐘`;
-
-          adjustHtml = `
-            <div class="routine-adjust">
-              <div style="display:flex; align-items:center; gap:6px;">
-                <span>下次時間：</span>
-                ${inputControl}
-              </div>
-              <button class="btn-sage" style="padding: 4px 10px; font-size: 12px;" onclick="restartRoutineTask('${task.id}')">啟動下次</button>
-            </div>
-          `;
-        }
-
-        item.innerHTML = `
-          <div class="task-top">
-            <div class="task-info">
-              <div class="task-name">${task.name} ${typeBadge}</div>
-              <div class="task-countdown" id="cd-${task.id}">${statusText}</div>
-            </div>
-            <div class="task-actions">
-              <button class="btn-icon" title="試看狂奔提醒" onclick='testTaskOverlay(${JSON.stringify(task)})'>▶</button>
-              <button class="btn-icon" title="刪除" onclick="deleteTask('${task.id}')">✕</button>
-            </div>
+      return `
+        <div class="edit-panel">
+          <div class="edit-row">
+            <span>📅 改期：</span>
+            <input type="date" id="edit-date-${task.id}" value="${task.dateStr}" style="padding: 3px 6px; font-size: 12px;" />
+            ${timeControl}
           </div>
-          ${adjustHtml}
-        `;
-        listEl.appendChild(item);
-      });
-
-      document.getElementById('taskCountBadge').textContent = `${runningCount} 個進行中`;
+          <div class="edit-row" style="justify-content: flex-end;">
+            <button class="btn-ghost" style="padding: 3px 8px; font-size: 11.5px;" onclick="toggleEditTask('${task.id}')">取消</button>
+            <button class="btn-sage" style="padding: 3px 10px; font-size: 11.5px;" onclick="saveTaskEdit('${task.id}')">儲存變更</button>
+          </div>
+        </div>
+      `;
     }
 
-    // 初始化渲染複盤紀錄
+    function renderTasks() {
+      const listEl = document.getElementById('taskList');
+      const futureListEl = document.getElementById('futureList');
+      listEl.innerHTML = '';
+      futureListEl.innerHTML = '';
+
+      const now = Date.now();
+      const curDateStr = getTodayDateString();
+      let runningTodayCount = 0;
+      let futureCount = 0;
+
+      state.tasks.forEach(task => {
+        const isFuture = task.dateStr && task.dateStr > curDateStr;
+        const editHtml = buildEditPanelHtml(task);
+
+        if (isFuture) {
+          futureCount++;
+          const item = document.createElement('div');
+          item.className = 'task-item';
+          item.innerHTML = `
+            <div class="task-top">
+              <div class="task-info">
+                <div class="task-name">${task.name} <span class="tag-future">📅 ${task.dateStr}</span></div>
+                <div class="task-countdown">預定時間：${task.mode === 'time' ? task.timeStr : task.minutes + '分鐘後'}</div>
+              </div>
+              <div class="task-actions">
+                <button class="btn-icon" title="臨時改期/改時間" onclick="toggleEditTask('${task.id}')">✎</button>
+                <button class="btn-icon" title="刪除" onclick="deleteTask('${task.id}')">✕</button>
+              </div>
+            </div>
+            ${editHtml}
+          `;
+          futureListEl.appendChild(item);
+        } else {
+          if (task.status === 'running') runningTodayCount++;
+
+          const item = document.createElement('div');
+          item.className = 'task-item';
+
+          const typeBadge = task.type === 'routine'
+            ? '<span class="tag-routine">🔁 例行</span>'
+            : '<span class="tag-routine">⚡ 單次</span>';
+
+          const scheduleDesc = task.mode === 'time'
+            ? `目標 ${task.timeStr}`
+            : `每 ${task.minutes} 分鐘`;
+
+          let statusText = '';
+          if (task.status === 'running') {
+            statusText = `${scheduleDesc} ・ ${formatRemaining(task.targetTimestamp - now)}`;
+          } else {
+            statusText = `已完成本輪（可調整下方日期時間並重新啟動）`;
+          }
+
+          let adjustHtml = '';
+          if (task.status === 'standby' && task.type === 'routine' && editingTaskId !== task.id) {
+            const inputControl = task.mode === 'time'
+              ? `<input type="time" id="adjust-time-${task.id}" value="${task.timeStr}" style="padding: 3px 6px; font-size: 12px;" />`
+              : `<input type="number" id="adjust-min-${task.id}" value="${task.minutes}" min="1" style="width: 55px; padding: 3px 6px; font-size: 12px;" /> 分鐘`;
+
+            adjustHtml = `
+              <div class="routine-adjust">
+                <div class="edit-row" style="width:100%;">
+                  <span>下次：</span>
+                  <input type="date" id="adjust-date-${task.id}" value="${curDateStr}" style="padding: 3px 6px; font-size: 12px;" />
+                  ${inputControl}
+                  <button class="btn-sage" style="padding: 4px 10px; font-size: 12px;" onclick="restartRoutineTask('${task.id}')">啟動</button>
+                </div>
+              </div>
+            `;
+          }
+
+          item.innerHTML = `
+            <div class="task-top">
+              <div class="task-info">
+                <div class="task-name">${task.name} ${typeBadge}</div>
+                <div class="task-countdown" id="cd-${task.id}">${statusText}</div>
+              </div>
+              <div class="task-actions">
+                <button class="btn-icon" title="臨時改期/改時間" onclick="toggleEditTask('${task.id}')">✎</button>
+                <button class="btn-icon" title="試看狂奔提醒" onclick='testTaskOverlay(${JSON.stringify(task)})'>▶</button>
+                <button class="btn-icon" title="刪除" onclick="deleteTask('${task.id}')">✕</button>
+              </div>
+            </div>
+            ${editHtml}
+            ${adjustHtml}
+          `;
+          listEl.appendChild(item);
+        }
+      });
+
+      document.getElementById('taskCountBadge').textContent = `${runningTodayCount} 個進行中`;
+      document.getElementById('futureHeaderTitle').textContent = `🔮 未來預排任務 (${futureCount} 項)`;
+      if (futureCount === 0) {
+        futureListEl.innerHTML = `<div style="font-size: 11.5px; color: var(--text-sub); text-align: center; padding: 4px;">目前沒有預排任務</div>`;
+      }
+    }
+
     renderReflectionLogs();
 
     // ====== 主計時器每秒巡檢 ======
@@ -1292,8 +1465,16 @@
       }
 
       const now = Date.now();
+      const curDateStr = getTodayDateString();
+
       state.tasks.forEach(task => {
-        if (task.status === 'running') {
+        if (task.dateStr && task.dateStr === curDateStr && task.targetTimestamp === null) {
+          task.targetTimestamp = computeTargetFromTask(task);
+          saveState();
+          renderTasks();
+        }
+
+        if (task.status === 'running' && task.dateStr === curDateStr) {
           const diff = task.targetTimestamp - now;
           const cdEl = document.getElementById(`cd-${task.id}`);
           if (cdEl) {
