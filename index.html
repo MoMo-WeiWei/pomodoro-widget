@@ -218,7 +218,7 @@
     }
 
     .task-top { display: flex; justify-content: space-between; align-items: center; }
-    .task-info { display: flex; flex-direction: column; gap: 2px; }
+    .task-info { display: flex; flex-direction: column; gap: 4px; }
     .task-name {
       font-size: 14px;
       font-weight: 600;
@@ -226,6 +226,14 @@
       align-items: center;
       gap: 6px;
       flex-wrap: wrap;
+    }
+
+    /* 星期與日期膠囊樣式（各自獨立有間距） */
+    .date-badge-row {
+      display: flex;
+      gap: 6px;
+      align-items: center;
+      margin-top: 2px;
     }
 
     .tag-routine {
@@ -237,7 +245,17 @@
       font-weight: 500;
     }
 
-    .tag-future {
+    .tag-date {
+      font-size: 11px;
+      background: #F3EFEA;
+      color: var(--text-main);
+      padding: 2px 6px;
+      border-radius: 6px;
+      font-weight: 500;
+      border: 1px solid var(--border-soft);
+    }
+
+    .tag-weekday {
       font-size: 11px;
       background: #E6EEF4;
       color: #4A7A96;
@@ -261,6 +279,51 @@
       border-radius: 6px;
     }
     .btn-icon:hover { background: #E5DFD7; color: var(--text-main); }
+
+    /* 任務內嵌細節/購買清單收合區 */
+    .subtask-section {
+      border-top: 1px dashed var(--border-soft);
+      padding-top: 6px;
+      margin-top: 2px;
+    }
+    .subtask-toggle-header {
+      font-size: 11.5px;
+      color: var(--text-sub);
+      cursor: pointer;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      user-select: none;
+      padding: 2px 0;
+    }
+    .subtask-content {
+      display: none;
+      flex-direction: column;
+      gap: 4px;
+      margin-top: 6px;
+      background: var(--bg-page);
+      padding: 8px;
+      border-radius: 8px;
+      border: 1px solid var(--border-soft);
+    }
+    .subtask-section.expanded .subtask-content {
+      display: flex;
+    }
+    .subtask-item-row {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .subtask-item-row input[type="text"] {
+      flex: 1;
+      padding: 3px 6px;
+      font-size: 12px;
+      background: var(--bg-input);
+    }
+    .subtask-item-row input:checked + span {
+      text-decoration: line-through;
+      color: var(--text-sub);
+    }
 
     .routine-adjust, .edit-panel {
       display: flex;
@@ -665,7 +728,7 @@
 
       <div class="add-task-box">
         <div class="form-row">
-          <input type="text" id="taskNameInput" placeholder="輸入事項（例：週五交報告、採買）" />
+          <input type="text" id="taskNameInput" placeholder="輸入事項（例：餐廳比較、採買清單）" />
         </div>
         <div class="form-row">
           <select id="taskModeSelect" onchange="toggleTimeInputMode()">
@@ -718,7 +781,7 @@
     </div>
   </div>
 
-  <!-- 互動遮罩 1：貓咪敲螢幕（喝水提醒：僅 5 / 15 分鐘） -->
+  <!-- 互動遮罩 1：貓咪敲螢幕（喝水提醒） -->
   <div class="overlay" id="waterOverlay">
     <div class="overlay-title" id="overlayTitle">🐱 叩、叩、叩！</div>
     <div class="overlay-sub" id="waterOverlaySub">小橘貓走過來敲敲螢幕叫你喝水囉！點一下畫面回應牠</div>
@@ -808,14 +871,13 @@
 
     <div class="quote-box" id="quoteBox">🌟 休息是為了走更長的路，而你是為了喝爆珍奶而活！</div>
 
-    <!-- 喝水專用精簡延期按鈕 (5分 / 15分) -->
     <div class="alert-btn-row">
       <button class="btn-ghost" onclick="postponeWaterAlert(5)">⏰ 延後 5 分鐘</button>
       <button class="btn-sage" onclick="postponeWaterAlert(15)">⏰ 延後 15 分鐘</button>
     </div>
   </div>
 
-  <!-- 互動遮罩 2：旋風奔跑小人提醒（彈性事項：支援自訂分鐘與改期排程） -->
+  <!-- 互動遮罩 2：旋風奔跑小人提醒（彈性事項） -->
   <div class="overlay" id="taskOverlay">
     <div class="overlay-title" id="taskOverlayTitle">⏰ 時間到了！</div>
     <div class="overlay-sub" id="taskOverlaySub">點擊下方奔跑小人，確認處理完成</div>
@@ -842,7 +904,6 @@
       </svg>
     </div>
 
-    <!-- 快捷分鐘延期 -->
     <div class="alert-btn-row">
       <button class="btn-ghost" onclick="postponeTaskMinutes(15)">+15分</button>
       <button class="btn-ghost" onclick="postponeTaskMinutes(30)">+30分</button>
@@ -850,7 +911,6 @@
       <button class="btn-ghost" onclick="postponeTaskCustomMinutes()">延分</button>
     </div>
 
-    <!-- 彈性事項專用「改日期 + 改時間」自訂延期排程器 -->
     <div class="alert-custom-box">
       <span style="font-size: 12px; color: var(--text-sub);">改期：</span>
       <input type="date" id="alertCustomDate" style="padding: 3px 6px; font-size: 12px;" />
@@ -958,7 +1018,6 @@
       }
     }
 
-    // ====== 日期格式化與星期轉換 ======
     function getTodayDateString() {
       const d = new Date();
       const year = d.getFullYear();
@@ -986,7 +1045,7 @@
     const todayStr = getTodayDateString();
     document.getElementById('taskDateInput').value = todayStr;
 
-    let state = JSON.parse(localStorage.getItem('notion_healing_widget_v13')) || {
+    let state = JSON.parse(localStorage.getItem('notion_healing_widget_v14')) || {
       waterInterval: 45,
       flowerDate: todayStr,
       flowerCount: 0,
@@ -995,14 +1054,18 @@
       tasks: [
         {
           id: 'default-lunch',
-          name: '訂午餐便當',
+          name: '餐廳比較與預訂',
           mode: 'time',
           timeStr: '11:30',
           minutes: 30,
           dateStr: todayStr,
           type: 'routine',
           status: 'running',
-          targetTimestamp: null
+          targetTimestamp: null,
+          subtasks: [
+            { text: 'A餐廳：氣氛好、但價位稍高', done: false },
+            { text: 'B餐廳：交通方便、有兒童座椅', done: true }
+          ]
         }
       ]
     };
@@ -1015,7 +1078,7 @@
     }
 
     function saveState() {
-      localStorage.setItem('notion_healing_widget_v13', JSON.stringify(state));
+      localStorage.setItem('notion_healing_widget_v14', JSON.stringify(state));
     }
 
     function computeTargetFromTask(task) {
@@ -1033,13 +1096,13 @@
 
     state.tasks.forEach(t => {
       if (!t.dateStr) t.dateStr = todayStr;
+      if (!t.subtasks) t.subtasks = [];
       if (t.status === 'running' && !t.targetTimestamp) {
         t.targetTimestamp = computeTargetFromTask(t);
       }
     });
     saveState();
 
-    // ====== 提醒佇列系統 ======
     let alertQueue = [];
     let currentAlert = null;
 
@@ -1069,7 +1132,6 @@
       }
     }
 
-    // ====== 喝水輪播與精簡延期功能 (5分 / 15分) ======
     let waterRunning = false;
     let waterRemainingSec = state.waterInterval * 60;
 
@@ -1169,7 +1231,6 @@
       }, 8000);
     }
 
-    // ====== 彈性任務、延期與跨日管理 ======
     let editingTaskId = null;
 
     function toggleEditTask(id) {
@@ -1203,6 +1264,48 @@
 
       saveState();
       renderTasks();
+    }
+
+    // 子任務收合與增刪改
+    function toggleSubtaskDrawer(id) {
+      const section = document.getElementById(`subtask-sec-${id}`);
+      if (section) {
+        section.classList.toggle('expanded');
+      }
+    }
+
+    function addSubtask(id) {
+      const task = state.tasks.find(t => t.id === id);
+      if (!task) return;
+      if (!task.subtasks) task.subtasks = [];
+      task.subtasks.push({ text: '新細節項目', done: false });
+      saveState();
+      renderTasks();
+    }
+
+    function updateSubtaskText(taskId, index, val) {
+      const task = state.tasks.find(t => t.id === taskId);
+      if (task && task.subtasks && task.subtasks[index]) {
+        task.subtasks[index].text = val;
+        saveState();
+      }
+    }
+
+    function toggleSubtaskCheck(taskId, index) {
+      const task = state.tasks.find(t => t.id === taskId);
+      if (task && task.subtasks && task.subtasks[index]) {
+        task.subtasks[index].done = !task.subtasks[index].done;
+        saveState();
+      }
+    }
+
+    function deleteSubtask(taskId, index) {
+      const task = state.tasks.find(t => t.id === taskId);
+      if (task && task.subtasks) {
+        task.subtasks.splice(index, 1);
+        saveState();
+        renderTasks();
+      }
     }
 
     function toggleReflectionDrawer() {
@@ -1246,7 +1349,8 @@
         dateStr,
         type,
         status: 'running',
-        targetTimestamp: null
+        targetTimestamp: null,
+        subtasks: []
       };
 
       newTask.targetTimestamp = computeTargetFromTask(newTask);
@@ -1507,6 +1611,32 @@
         const editHtml = buildEditPanelHtml(task);
         const weekdayStr = getWeekdayString(task.dateStr);
 
+        // 組合子任務 HTML
+        if (!task.subtasks) task.subtasks = [];
+        let subtaskItemsHtml = '';
+        task.subtasks.forEach((sub, sIdx) => {
+          subtaskItemsHtml += `
+            <div class="subtask-item-row">
+              <input type="checkbox" ${sub.done ? 'checked' : ''} onclick="toggleSubtaskCheck('${task.id}', ${sIdx})" />
+              <input type="text" value="${sub.text}" oninput="updateSubtaskText('${task.id}', ${sIdx}, this.value)" placeholder="輸入細節或餐廳選項..." />
+              <button class="btn-icon" style="padding: 2px 6px; font-size: 11px;" onclick="deleteSubtask('${task.id}', ${sIdx})">✕</button>
+            </div>
+          `;
+        });
+
+        const subtaskSectionHtml = `
+          <div class="subtask-section" id="subtask-sec-${task.id}">
+            <div class="subtask-toggle-header" onclick="toggleSubtaskDrawer('${task.id}')">
+              <span>📝 細項/採買清單 (${task.subtasks.length} 項)</span>
+              <span>▼ 展開 / 收合</span>
+            </div>
+            <div class="subtask-content">
+              ${subtaskItemsHtml}
+              <button class="btn-ghost" style="padding: 3px 8px; font-size: 11.5px; align-self: flex-start; margin-top: 4px;" onclick="addSubtask('${task.id}')">+ 新增細節項目</button>
+            </div>
+          </div>
+        `;
+
         if (isFuture) {
           futureCount++;
           const item = document.createElement('div');
@@ -1514,7 +1644,11 @@
           item.innerHTML = `
             <div class="task-top">
               <div class="task-info">
-                <div class="task-name">${task.name} <span class="tag-future">📅 ${task.dateStr} (${weekdayStr})</span></div>
+                <div class="task-name">${task.name}</div>
+                <div class="date-badge-row">
+                  <span class="tag-date">📅 ${task.dateStr}</span>
+                  <span class="tag-weekday">${weekdayStr}</span>
+                </div>
                 <div class="task-countdown">預定時間：${task.mode === 'time' ? task.timeStr : task.minutes + '分鐘後'}</div>
               </div>
               <div class="task-actions">
@@ -1523,6 +1657,7 @@
               </div>
             </div>
             ${editHtml}
+            ${subtaskSectionHtml}
           `;
           futureListEl.appendChild(item);
         } else {
@@ -1568,6 +1703,10 @@
             <div class="task-top">
               <div class="task-info">
                 <div class="task-name">${task.name} ${typeBadge}</div>
+                <div class="date-badge-row">
+                  <span class="tag-date">📅 ${task.dateStr}</span>
+                  <span class="tag-weekday">${weekdayStr}</span>
+                </div>
                 <div class="task-countdown" id="cd-${task.id}">${statusText}</div>
               </div>
               <div class="task-actions">
@@ -1578,6 +1717,7 @@
             </div>
             ${editHtml}
             ${adjustHtml}
+            ${subtaskSectionHtml}
           `;
           listEl.appendChild(item);
         }
@@ -1592,7 +1732,6 @@
 
     renderReflectionLogs();
 
-    // ====== 主計時器每秒巡檢 ======
     setInterval(() => {
       if (waterRunning) {
         if (waterRemainingSec > 0) {
