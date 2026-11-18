@@ -282,7 +282,6 @@
       flex-wrap: wrap;
     }
 
-    /* 未來預排任務專用折疊區塊 */
     .future-section {
       margin-top: 12px;
       border-top: 1px dashed var(--border-soft);
@@ -307,7 +306,6 @@
       display: flex;
     }
 
-    /* 夜間複盤紀錄抽屜 */
     .reflection-card {
       background-color: var(--bg-card);
       border: 1px solid var(--border-soft);
@@ -372,7 +370,6 @@
     }
     .btn-copy:hover { background: #E5DFD7; }
 
-    /* 互動遮罩與彈出提醒框 */
     .overlay {
       position: fixed;
       inset: 0;
@@ -400,16 +397,29 @@
     .overlay-sub {
       font-size: 13px;
       color: var(--text-sub);
-      margin-bottom: 12px;
+      margin-bottom: 8px;
       min-height: 18px;
     }
 
     .alert-btn-row {
       display: flex;
-      gap: 8px;
+      gap: 6px;
       align-items: center;
       justify-content: center;
-      margin-top: 12px;
+      margin-top: 8px;
+      flex-wrap: wrap;
+    }
+
+    .alert-custom-box {
+      display: flex;
+      gap: 6px;
+      align-items: center;
+      justify-content: center;
+      margin-top: 6px;
+      background: var(--bg-card);
+      padding: 6px 10px;
+      border-radius: 10px;
+      border: 1px solid var(--border-soft);
     }
 
     .quote-box {
@@ -420,7 +430,7 @@
       border: 1px dashed #D4C5B9;
       border-radius: 10px;
       padding: 8px 14px;
-      margin-top: 10px;
+      margin-top: 6px;
       max-width: 290px;
       line-height: 1.4;
       opacity: 0;
@@ -432,7 +442,6 @@
       transform: translateY(0);
     }
 
-    /* 劇場舞台 */
     .garden-stage {
       width: 290px;
       height: 210px;
@@ -445,7 +454,7 @@
       cursor: pointer;
       position: relative;
       overflow: hidden;
-      margin-bottom: 10px;
+      margin-bottom: 6px;
       box-shadow: 0 10px 25px rgba(74, 70, 65, 0.08);
     }
 
@@ -531,7 +540,6 @@
       50% { opacity: 1; transform: scale(1.25) rotate(15deg); }
     }
 
-    /* 旋風奔跑小人動畫 */
     .runner-stage {
       width: 240px;
       height: 140px;
@@ -545,7 +553,7 @@
       cursor: pointer;
       position: relative;
       overflow: hidden;
-      margin-bottom: 12px;
+      margin-bottom: 6px;
     }
 
     .runner-svg { animation: runBodyBounce 0.22s infinite alternate ease-in-out; }
@@ -648,7 +656,7 @@
       </div>
     </div>
 
-    <!-- 區塊二：彈性提醒任務清單（支援星期顯示與自動排序） -->
+    <!-- 區塊二：彈性提醒任務清單 -->
     <div class="card">
       <div class="card-header">
         <div class="card-title">🏃 彈性事項提醒</div>
@@ -710,7 +718,7 @@
     </div>
   </div>
 
-  <!-- 互動遮罩 1：貓咪敲螢幕（含延期按鈕） -->
+  <!-- 互動遮罩 1：貓咪敲螢幕（喝水提醒：僅 5 / 15 分鐘） -->
   <div class="overlay" id="waterOverlay">
     <div class="overlay-title" id="overlayTitle">🐱 叩、叩、叩！</div>
     <div class="overlay-sub" id="waterOverlaySub">小橘貓走過來敲敲螢幕叫你喝水囉！點一下畫面回應牠</div>
@@ -800,14 +808,14 @@
 
     <div class="quote-box" id="quoteBox">🌟 休息是為了走更長的路，而你是為了喝爆珍奶而活！</div>
 
-    <!-- 喝水提醒專用延期按鈕列 -->
+    <!-- 喝水專用精簡延期按鈕 (5分 / 15分) -->
     <div class="alert-btn-row">
-      <button class="btn-ghost" onclick="postponeWaterAlert(15)">⏰ 延期 15 分鐘</button>
-      <button class="btn-sage" onclick="postponeWaterAlert(30)">⏰ 延期 30 分鐘</button>
+      <button class="btn-ghost" onclick="postponeWaterAlert(5)">⏰ 延後 5 分鐘</button>
+      <button class="btn-sage" onclick="postponeWaterAlert(15)">⏰ 延後 15 分鐘</button>
     </div>
   </div>
 
-  <!-- 互動遮罩 2：旋風奔跑小人提醒（含延期按鈕） -->
+  <!-- 互動遮罩 2：旋風奔跑小人提醒（彈性事項：支援自訂分鐘與改期排程） -->
   <div class="overlay" id="taskOverlay">
     <div class="overlay-title" id="taskOverlayTitle">⏰ 時間到了！</div>
     <div class="overlay-sub" id="taskOverlaySub">點擊下方奔跑小人，確認處理完成</div>
@@ -834,10 +842,20 @@
       </svg>
     </div>
 
-    <!-- 彈性任務專用延期按鈕列 -->
+    <!-- 快捷分鐘延期 -->
     <div class="alert-btn-row">
-      <button class="btn-ghost" onclick="postponeCurrentTask(15)">⏰ 延期 15 分鐘</button>
-      <button class="btn-sage" onclick="postponeCurrentTask(30)">⏰ 延期 30 分鐘</button>
+      <button class="btn-ghost" onclick="postponeTaskMinutes(15)">+15分</button>
+      <button class="btn-ghost" onclick="postponeTaskMinutes(30)">+30分</button>
+      <input type="number" id="taskCustomMin" class="input-mini" placeholder="分" min="1" max="1440" style="width: 48px; padding: 4px;" />
+      <button class="btn-ghost" onclick="postponeTaskCustomMinutes()">延分</button>
+    </div>
+
+    <!-- 彈性事項專用「改日期 + 改時間」自訂延期排程器 -->
+    <div class="alert-custom-box">
+      <span style="font-size: 12px; color: var(--text-sub);">改期：</span>
+      <input type="date" id="alertCustomDate" style="padding: 3px 6px; font-size: 12px;" />
+      <input type="time" id="alertCustomTime" value="12:00" style="padding: 3px 6px; font-size: 12px;" />
+      <button class="btn-sage" style="padding: 4px 10px; font-size: 12px;" onclick="postponeTaskDateTime()">確認改期</button>
     </div>
   </div>
 
@@ -949,6 +967,16 @@
       return `${year}-${month}-${day}`;
     }
 
+    function getNextDateString(dateStr) {
+      const [yy, mo, dd] = dateStr.split('-').map(Number);
+      const d = new Date(yy, mo - 1, dd);
+      d.setDate(d.getDate() + 1);
+      const year = d.getFullYear();
+      const month = String(d.getMonth() + 1).padStart(2, '0');
+      const day = String(d.getDate()).padStart(2, '0');
+      return `${year}-${month}-${day}`;
+    }
+
     function getWeekdayString(dateStr) {
       const weekdays = ['週日', '週一', '週二', '週三', '週四', '週五', '週六'];
       const d = new Date(dateStr);
@@ -958,7 +986,7 @@
     const todayStr = getTodayDateString();
     document.getElementById('taskDateInput').value = todayStr;
 
-    let state = JSON.parse(localStorage.getItem('notion_healing_widget_v10')) || {
+    let state = JSON.parse(localStorage.getItem('notion_healing_widget_v13')) || {
       waterInterval: 45,
       flowerDate: todayStr,
       flowerCount: 0,
@@ -987,7 +1015,7 @@
     }
 
     function saveState() {
-      localStorage.setItem('notion_healing_widget_v10', JSON.stringify(state));
+      localStorage.setItem('notion_healing_widget_v13', JSON.stringify(state));
     }
 
     function computeTargetFromTask(task) {
@@ -1041,7 +1069,7 @@
       }
     }
 
-    // ====== 喝水輪播與延期功能 ======
+    // ====== 喝水輪播與精簡延期功能 (5分 / 15分) ======
     let waterRunning = false;
     let waterRemainingSec = state.waterInterval * 60;
 
@@ -1141,7 +1169,7 @@
       }, 8000);
     }
 
-    // ====== 彈性任務、延期與自動排序管理 ======
+    // ====== 彈性任務、延期與跨日管理 ======
     let editingTaskId = null;
 
     function toggleEditTask(id) {
@@ -1272,17 +1300,63 @@
       startContinuousChime('task');
       document.getElementById('taskOverlayTitle').textContent = `⏰ ${task.name}`;
       document.getElementById('taskOverlaySub').textContent = '點擊下方奔跑小人，確認處理完成！';
+      
+      document.getElementById('alertCustomDate').value = task.dateStr || getTodayDateString();
+      document.getElementById('alertCustomTime').value = task.timeStr || '12:00';
+
       document.getElementById('runnerStage').classList.remove('runner-finished');
       document.getElementById('taskOverlay').classList.add('active');
     }
 
-    function postponeCurrentTask(minutes) {
+    function postponeTaskMinutes(minutes) {
       if (!currentAlert || currentAlert === 'water') return;
       stopContinuousChime();
 
       const task = currentAlert;
       task.targetTimestamp = Date.now() + minutes * 60000;
       task.status = 'running';
+      saveState();
+
+      document.getElementById('taskOverlay').classList.remove('active');
+      currentAlert = null;
+      renderTasks();
+      processQueue();
+    }
+
+    function postponeTaskCustomMinutes() {
+      const customMin = parseInt(document.getElementById('taskCustomMin').value, 10);
+      if (!customMin || customMin <= 0) {
+        alert('請輸入有效的延期分鐘數喔！');
+        return;
+      }
+      document.getElementById('taskCustomMin').value = '';
+      postponeTaskMinutes(customMin);
+    }
+
+    function postponeTaskDateTime() {
+      if (!currentAlert || currentAlert === 'water') return;
+      stopContinuousChime();
+
+      const task = currentAlert;
+      const newDate = document.getElementById('alertCustomDate').value;
+      const newTime = document.getElementById('alertCustomTime').value;
+
+      if (!newDate) {
+        alert('請選擇要延期到的目標日期喔！');
+        return;
+      }
+
+      task.dateStr = newDate;
+      if (task.mode === 'time' && newTime) {
+        task.timeStr = newTime;
+      }
+      task.status = 'running';
+      task.targetTimestamp = computeTargetFromTask(task);
+
+      if (task.dateStr > getTodayDateString()) {
+        document.getElementById('futureSection').classList.add('expanded');
+      }
+
       saveState();
 
       document.getElementById('taskOverlay').classList.remove('active');
@@ -1314,8 +1388,9 @@
         if (task.type === 'once') {
           state.tasks.splice(idx, 1);
         } else {
-          task.status = 'standby';
-          task.targetTimestamp = null;
+          task.dateStr = getNextDateString(getTodayDateString());
+          task.targetTimestamp = computeTargetFromTask(task);
+          task.status = 'running';
         }
         saveState();
       }
@@ -1408,7 +1483,16 @@
       const now = Date.now();
       const curDateStr = getTodayDateString();
 
-      // 自動排序：無論輸入順序，將目標時間/剩餘時間最靠近的排在最上面
+      state.tasks.forEach(task => {
+        if (task.type === 'routine' && task.dateStr === curDateStr && task.status === 'running') {
+          if (task.targetTimestamp && task.targetTimestamp < now) {
+            task.dateStr = getNextDateString(curDateStr);
+            task.targetTimestamp = computeTargetFromTask(task);
+            saveState();
+          }
+        }
+      });
+
       const sortedTasks = [...state.tasks].sort((a, b) => {
         const timeA = a.targetTimestamp || (computeTargetFromTask(a));
         const timeB = b.targetTimestamp || (computeTargetFromTask(b));
