@@ -1093,8 +1093,7 @@
     const todayStr = getTodayDateString();
     document.getElementById('taskDateInput').value = todayStr;
 
-    // 清除預設任務，讓初始化完全乾淨
-    let state = JSON.parse(localStorage.getItem('notion_healing_widget_v16')) || {
+    let state = JSON.parse(localStorage.getItem('notion_healing_widget_v17')) || {
       waterInterval: 45,
       flowerDate: todayStr,
       flowerCount: 0,
@@ -1111,7 +1110,7 @@
     }
 
     function saveState() {
-      localStorage.setItem('notion_healing_widget_v16', JSON.stringify(state));
+      localStorage.setItem('notion_healing_widget_v17', JSON.stringify(state));
     }
 
     function computeTargetFromTask(task) {
@@ -1302,7 +1301,6 @@
       renderTasks();
     }
 
-    // 巢狀細項管理（新增時 value 設為空字串，不出現預設文字）
     function toggleSubtaskDrawer(id) {
       const section = document.getElementById(`subtask-sec-${id}`);
       if (section) {
@@ -1587,7 +1585,6 @@
         if (task.type === 'once') {
           state.tasks.splice(idx, 1);
         } else {
-          // 每次完成後自動推遲到隔天同一時間
           task.dateStr = getNextDateString(getTodayDateString());
           task.targetTimestamp = computeTargetFromTask(task);
           task.status = 'running';
@@ -1722,7 +1719,7 @@
       const now = Date.now();
       const curDateStr = getTodayDateString();
 
-      // 嚴謹的例行公事跨日檢核：若日期已過且尚未完成，自動將日期推進到今天或隔天並更新目標時間
+      // 檢查：若例行公事日期小於今天，直接靜默推到今天
       state.tasks.forEach(task => {
         if (task.type === 'routine' && task.dateStr < curDateStr && task.status === 'running') {
           task.dateStr = curDateStr;
@@ -1884,6 +1881,7 @@
 
     renderReflectionLogs();
 
+    // ====== 主計時器每秒巡檢 ======
     setInterval(() => {
       if (waterRunning) {
         if (waterRemainingSec > 0) {
@@ -1905,7 +1903,6 @@
           renderTasks();
         }
 
-        // 當時間到達或過期時（diff <= 0），立即觸發彈出提醒，確保不會漏掉提醒
         if (task.status === 'running' && task.dateStr === curDateStr) {
           const diff = task.targetTimestamp - now;
           const cdEl = document.getElementById(`cd-${task.id}`);
@@ -1913,8 +1910,19 @@
             const scheduleDesc = task.mode === 'time' ? `目標 ${task.timeStr}` : `每 ${task.minutes} 分鐘`;
             cdEl.textContent = `${scheduleDesc} ・ ${formatRemaining(diff)}`;
           }
+
+          // 核心修復：當時間到達或超過 (diff <= 0)
           if (diff <= 0) {
-            enqueueAlert(task);
+            if (task.type === 'routine') {
+              // 如果是「例行公事」，不跳出提醒，直接靜默自動跳轉到隔天同一時間！
+              task.dateStr = getNextDateString(curDateStr);
+              task.targetTimestamp = computeTargetFromTask(task);
+              saveState();
+              renderTasks();
+            } else {
+              // 如果是「一次性任務」，時間到正常跳出提醒
+              enqueueAlert(task);
+            }
           }
         }
       });
