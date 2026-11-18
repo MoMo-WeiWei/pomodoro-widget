@@ -279,7 +279,6 @@
     }
     .btn-icon:hover { background: #E5DFD7; color: var(--text-main); }
 
-    /* 多層級細項收合與巢狀結構樣式 */
     .subtask-section {
       border-top: 1px dashed var(--border-soft);
       padding-top: 6px;
@@ -334,7 +333,6 @@
       color: var(--text-sub);
     }
 
-    /* 巢狀子細項區塊 */
     .nested-children-box {
       margin-left: 20px;
       display: flex;
@@ -403,7 +401,6 @@
       display: flex;
     }
 
-    /* 夜間複盤抽屜與已完成細項支援 */
     .reflection-card {
       background-color: var(--bg-card);
       border: 1px solid var(--border-soft);
@@ -460,7 +457,6 @@
     }
     .log-time { color: var(--text-sub); font-size: 11.5px; }
 
-    /* 複盤清單內部的子細項檢視 */
     .log-subtask-preview {
       margin-left: 12px;
       font-size: 11.5px;
@@ -1097,43 +1093,14 @@
     const todayStr = getTodayDateString();
     document.getElementById('taskDateInput').value = todayStr;
 
-    let state = JSON.parse(localStorage.getItem('notion_healing_widget_v15')) || {
+    // 清除預設任務，讓初始化完全乾淨
+    let state = JSON.parse(localStorage.getItem('notion_healing_widget_v16')) || {
       waterInterval: 45,
       flowerDate: todayStr,
       flowerCount: 0,
       logDate: todayStr,
       completedLogs: [],
-      tasks: [
-        {
-          id: 'default-restaurant',
-          name: '訂餐廳比較與條件確認',
-          mode: 'time',
-          timeStr: '11:30',
-          minutes: 30,
-          dateStr: todayStr,
-          type: 'routine',
-          status: 'running',
-          targetTimestamp: null,
-          subtasks: [
-            {
-              text: 'A 餐廳',
-              done: false,
-              children: [
-                { text: '氣氛好、適合拍照', done: false },
-                { text: '價位稍高 (一人約 1200)', done: true }
-              ]
-            },
-            {
-              text: 'B 餐廳',
-              done: false,
-              children: [
-                { text: '交通方便、有停車場', done: false },
-                { text: '有兒童座椅與餐具', done: false }
-              ]
-            }
-          ]
-        }
-      ]
+      tasks: []
     };
 
     if (state.flowerDate !== todayStr || state.logDate !== todayStr) {
@@ -1144,7 +1111,7 @@
     }
 
     function saveState() {
-      localStorage.setItem('notion_healing_widget_v15', JSON.stringify(state));
+      localStorage.setItem('notion_healing_widget_v16', JSON.stringify(state));
     }
 
     function computeTargetFromTask(task) {
@@ -1335,7 +1302,7 @@
       renderTasks();
     }
 
-    // 巢狀細項管理（新增後保持展開狀態）
+    // 巢狀細項管理（新增時 value 設為空字串，不出現預設文字）
     function toggleSubtaskDrawer(id) {
       const section = document.getElementById(`subtask-sec-${id}`);
       if (section) {
@@ -1347,10 +1314,9 @@
       const task = state.tasks.find(t => t.id === id);
       if (!task) return;
       if (!task.subtasks) task.subtasks = [];
-      task.subtasks.push({ text: '新增細項分類', done: false, children: [] });
+      task.subtasks.push({ text: '', done: false, children: [] });
       saveState();
       renderTasks();
-      // 保持展開
       setTimeout(() => {
         const sec = document.getElementById(`subtask-sec-${id}`);
         if (sec) sec.classList.add('expanded');
@@ -1386,12 +1352,11 @@
       }
     }
 
-    // 子細項（第二層）新增與編輯
     function addChildSubtask(taskId, parentIndex) {
       const task = state.tasks.find(t => t.id === taskId);
       if (task && task.subtasks && task.subtasks[parentIndex]) {
         if (!task.subtasks[parentIndex].children) task.subtasks[parentIndex].children = [];
-        task.subtasks[parentIndex].children.push({ text: '新子條件/備忘', done: false });
+        task.subtasks[parentIndex].children.push({ text: '', done: false });
         saveState();
         renderTasks();
         setTimeout(() => {
@@ -1438,7 +1403,6 @@
       document.getElementById('futureSection').classList.toggle('expanded');
     }
 
-    // 複盤區塊中單筆紀錄的細項展開收合
     function toggleLogSubtasks(logIndex) {
       const box = document.getElementById(`log-subtask-box-${logIndex}`);
       if (box) {
@@ -1613,7 +1577,6 @@
         const task = state.tasks[idx];
         const nowTime = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
         
-        // 將任務及其包含的巢狀子細項完整存入複盤紀錄
         state.completedLogs.push({
           name: task.name,
           time: nowTime,
@@ -1624,6 +1587,7 @@
         if (task.type === 'once') {
           state.tasks.splice(idx, 1);
         } else {
+          // 每次完成後自動推遲到隔天同一時間
           task.dateStr = getNextDateString(getTodayDateString());
           task.targetTimestamp = computeTargetFromTask(task);
           task.status = 'running';
@@ -1647,7 +1611,6 @@
       }
       let textToCopy = `【今日完成任務複盤】\n`;
       state.completedLogs.forEach(log => {
-        const checkIcon = log.subtasks && log.subtasks.length > 0 ? '' : '';
         textToCopy += `- [x] ${log.name} (${log.time})\n`;
         if (log.subtasks && log.subtasks.length > 0) {
           log.subtasks.forEach(sub => {
@@ -1664,7 +1627,7 @@
       });
       
       navigator.clipboard.writeText(textToCopy).then(() => {
-        alert('✅ 已複製含多層級細項的複盤格式！可以直接貼到 Notion 中。');
+        alert('✅ 已複製複盤格式！可以直接貼到 Notion 中。');
       }).catch(err => {
         console.error('複製失敗', err);
       });
@@ -1759,13 +1722,12 @@
       const now = Date.now();
       const curDateStr = getTodayDateString();
 
+      // 嚴謹的例行公事跨日檢核：若日期已過且尚未完成，自動將日期推進到今天或隔天並更新目標時間
       state.tasks.forEach(task => {
-        if (task.type === 'routine' && task.dateStr === curDateStr && task.status === 'running') {
-          if (task.targetTimestamp && task.targetTimestamp < now) {
-            task.dateStr = getNextDateString(curDateStr);
-            task.targetTimestamp = computeTargetFromTask(task);
-            saveState();
-          }
+        if (task.type === 'routine' && task.dateStr < curDateStr && task.status === 'running') {
+          task.dateStr = curDateStr;
+          task.targetTimestamp = computeTargetFromTask(task);
+          saveState();
         }
       });
 
@@ -1943,6 +1905,7 @@
           renderTasks();
         }
 
+        // 當時間到達或過期時（diff <= 0），立即觸發彈出提醒，確保不會漏掉提醒
         if (task.status === 'running' && task.dateStr === curDateStr) {
           const diff = task.targetTimestamp - now;
           const cdEl = document.getElementById(`cd-${task.id}`);
