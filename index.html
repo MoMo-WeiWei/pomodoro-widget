@@ -43,7 +43,6 @@
       position: relative;
     }
 
-    /* 卡片共用樣式 */
     .card {
       background-color: var(--bg-card);
       border: 1px solid var(--border-soft);
@@ -76,7 +75,6 @@
       color: var(--text-sub);
     }
 
-    /* 喝水區塊 */
     .water-display {
       display: flex;
       align-items: center;
@@ -133,16 +131,10 @@
       transition: all 0.2s ease;
     }
 
-    .btn-sage {
-      background-color: var(--accent-sage);
-      color: white;
-    }
+    .btn-sage { background-color: var(--accent-sage); color: white; }
     .btn-sage:hover { background-color: var(--accent-sage-hover); }
 
-    .btn-terracotta {
-      background-color: var(--accent-terracotta);
-      color: white;
-    }
+    .btn-terracotta { background-color: var(--accent-terracotta); color: white; }
     .btn-terracotta:hover { background-color: var(--accent-terracotta-hover); }
 
     .btn-ghost {
@@ -155,7 +147,6 @@
       color: var(--text-main);
     }
 
-    /* 新增任務表單 */
     .add-task-box {
       background: var(--bg-input);
       border: 1px solid var(--border-soft);
@@ -173,11 +164,8 @@
       align-items: center;
     }
 
-    .form-row input[type="text"] {
-      flex: 1;
-    }
+    .form-row input[type="text"] { flex: 1; }
 
-    /* 任務清單項目 */
     .task-list {
       display: flex;
       flex-direction: column;
@@ -247,7 +235,6 @@
       color: var(--text-main);
     }
 
-    /* 例行任務待命調整列 */
     .routine-adjust {
       display: flex;
       align-items: center;
@@ -259,11 +246,11 @@
       color: var(--text-sub);
     }
 
-    /* 互動遮罩 Overlay */
+    /* 互動遮罩 */
     .overlay {
       position: fixed;
       inset: 0;
-      background: rgba(250, 248, 245, 0.94);
+      background: rgba(250, 248, 245, 0.95);
       backdrop-filter: blur(4px);
       display: none;
       flex-direction: column;
@@ -297,7 +284,7 @@
       margin-bottom: 20px;
     }
 
-    /* ===== 動畫 1：療癒澆花與開花 ===== */
+    /* 澆花動畫維持不變 */
     .flower-stage {
       width: 180px;
       height: 180px;
@@ -314,13 +301,8 @@
     }
     .flower-stage:hover { transform: scale(1.03); }
 
-    .water-drop {
-      opacity: 0;
-      transform: translateY(-15px);
-    }
-    .watering .water-drop {
-      animation: dropFall 0.7s ease-in forwards;
-    }
+    .water-drop { opacity: 0; transform: translateY(-15px); }
+    .watering .water-drop { animation: dropFall 0.7s ease-in forwards; }
     @keyframes dropFall {
       0% { opacity: 1; transform: translateY(-15px); }
       70% { opacity: 1; transform: translateY(15px); }
@@ -333,12 +315,9 @@
       opacity: 0.4;
       transition: all 0.8s cubic-bezier(0.34, 1.56, 0.64, 1);
     }
-    .bloomed .flower-head {
-      transform: scale(1);
-      opacity: 1;
-    }
+    .bloomed .flower-head { transform: scale(1); opacity: 1; }
 
-    /* ===== 動畫 2：小人物狂奔衝刺 ===== */
+    /* ===== 改版：旋風奔跑小人動畫 ===== */
     .runner-stage {
       width: 240px;
       height: 140px;
@@ -356,28 +335,22 @@
     }
 
     .runner-svg {
-      animation: runBounce 0.28s infinite alternate ease-in-out;
+      animation: runBodyBounce 0.22s infinite alternate ease-in-out;
     }
-    @keyframes runBounce {
-      0% { transform: translateY(0px) rotate(-3deg); }
-      100% { transform: translateY(-8px) rotate(4deg); }
+    @keyframes runBodyBounce {
+      0% { transform: translateY(1px) rotate(-4deg); }
+      100% { transform: translateY(-6px) rotate(4deg); }
     }
 
-    .leg-front {
-      transform-origin: 50px 58px;
-      animation: swingFront 0.28s infinite alternate ease-in-out;
+    /* 旋風風火輪特效 */
+    .cyclone-wheel {
+      transform-origin: 52px 68px;
+      animation: spinCyclone 0.18s linear infinite;
     }
-    .leg-back {
-      transform-origin: 50px 58px;
-      animation: swingBack 0.28s infinite alternate ease-in-out;
-    }
-    @keyframes swingFront {
-      0% { transform: rotate(-35deg); }
-      100% { transform: rotate(35deg); }
-    }
-    @keyframes swingBack {
-      0% { transform: rotate(35deg); }
-      100% { transform: rotate(-35deg); }
+    @keyframes spinCyclone {
+      0% { transform: rotate(0deg) scale(0.95); }
+      50% { transform: rotate(180deg) scale(1.05); }
+      100% { transform: rotate(360deg) scale(0.95); }
     }
 
     .speed-lines {
@@ -391,12 +364,12 @@
       stroke-width: 2;
       stroke-linecap: round;
       opacity: 0.4;
-      animation: dashMove 0.4s linear infinite;
+      animation: dashMove 0.3s linear infinite;
     }
     @keyframes dashMove {
-      0% { transform: translateX(60px); opacity: 0; }
-      50% { opacity: 0.5; }
-      100% { transform: translateX(-80px); opacity: 0; }
+      0% { transform: translateX(70px); opacity: 0; }
+      50% { opacity: 0.6; }
+      100% { transform: translateX(-90px); opacity: 0; }
     }
 
     .runner-finished .runner-svg {
@@ -404,9 +377,9 @@
       transform: translateY(0) scale(1.1);
       transition: transform 0.3s ease;
     }
-    .runner-finished .leg-front, .runner-finished .leg-back {
+    .runner-finished .cyclone-wheel {
       animation: none;
-      transform: rotate(0deg);
+      opacity: 0.3;
     }
   </style>
 </head>
@@ -434,7 +407,7 @@
       <div class="water-controls">
         <span>每隔</span>
         <input type="number" id="waterIntervalInput" class="input-mini" value="45" min="1" max="240" onchange="updateWaterInterval()" />
-        <span>分鐘自動提醒（點完成後自動下一輪）</span>
+        <span>分鐘自動提醒</span>
       </div>
     </div>
 
@@ -445,7 +418,6 @@
         <div class="badge" id="taskCountBadge">0 個進行中</div>
       </div>
 
-      <!-- 新增表單 -->
       <div class="add-task-box">
         <div class="form-row">
           <input type="text" id="taskNameInput" placeholder="輸入事項（例：訂午餐、收衣服）" />
@@ -468,7 +440,6 @@
         </div>
       </div>
 
-      <!-- 清單區 -->
       <div class="task-list" id="taskList"></div>
     </div>
   </div>
@@ -480,19 +451,15 @@
     
     <div class="flower-stage" id="flowerStage" onclick="triggerWatering()">
       <svg width="160" height="160" viewBox="0 0 180 180">
-        <!-- 花盆 -->
         <polygon points="65,125 115,125 108,160 72,160" fill="#D48C70" />
         <rect x="60" y="118" width="60" height="8" rx="4" fill="#C27A5E" />
-        <!-- 莖與葉子 -->
         <path d="M90,118 Q88,95 90,75" stroke="#7A947E" stroke-width="4" fill="none" stroke-linecap="round" />
         <path d="M90,102 Q72,95 70,105 Q78,112 90,105" fill="#8FA893" />
         <path d="M90,94 Q108,87 110,97 Q102,104 90,97" fill="#8FA893" />
-        <!-- 水滴 -->
         <g class="water-drop">
           <path d="M75,35 Q75,45 70,45 Q65,45 65,35 Q70,25 75,35 Z" fill="#7FB3D5" />
           <path d="M110,42 Q110,52 105,52 Q100,52 100,42 Q105,32 110,42 Z" fill="#7FB3D5" />
         </g>
-        <!-- 花朵 -->
         <g class="flower-head">
           <circle cx="90" cy="55" r="14" fill="#F2D0A9" />
           <circle cx="74" cy="68" r="14" fill="#F2D0A9" />
@@ -505,38 +472,43 @@
     </div>
   </div>
 
-  <!-- 互動遮罩 2：小人物狂奔提醒 -->
+  <!-- 互動遮罩 2：旋風奔跑小人提醒 -->
   <div class="overlay" id="taskOverlay">
     <div class="overlay-title" id="taskOverlayTitle">⏰ 時間到了！</div>
-    <div class="overlay-sub" id="taskOverlaySub">點擊下方狂奔小人，確認處理完成</div>
+    <div class="overlay-sub" id="taskOverlaySub">點擊下方奔跑小人，確認處理完成</div>
 
     <div class="runner-stage" id="runnerStage" onclick="completeTriggeredTask()">
       <svg class="speed-lines" viewBox="0 0 240 140">
         <line class="speed-line" x1="180" y1="35" x2="220" y2="35" />
-        <line class="speed-line" x1="190" y1="70" x2="235" y2="70" style="animation-delay: 0.15s;" />
-        <line class="speed-line" x1="175" y1="105" x2="215" y2="105" style="animation-delay: 0.25s;" />
+        <line class="speed-line" x1="190" y1="70" x2="235" y2="70" style="animation-delay: 0.1s;" />
+        <line class="speed-line" x1="175" y1="105" x2="215" y2="105" style="animation-delay: 0.2s;" />
       </svg>
 
       <svg class="runner-svg" width="110" height="110" viewBox="0 0 100 100">
         <!-- 汗滴 -->
-        <path d="M72,22 Q72,28 69,28 Q66,28 66,22 Q69,16 72,22 Z" fill="#7FB3D5" />
-        <!-- 頭 -->
-        <circle cx="52" cy="24" r="10" fill="#4A4641" />
-        <!-- 身體前傾 -->
-        <line x1="52" y1="34" x2="48" y2="58" stroke="#4A4641" stroke-width="5" stroke-linecap="round" />
+        <path d="M74,20 Q74,26 71,26 Q68,26 68,20 Q71,14 74,20 Z" fill="#7FB3D5" />
+        <!-- 頭與身體 -->
+        <circle cx="54" cy="22" r="10" fill="#4A4641" />
+        <line x1="54" y1="32" x2="52" y2="60" stroke="#4A4641" stroke-width="5.5" stroke-linecap="round" />
         <!-- 擺動手臂 -->
-        <polyline points="50,40 65,45 72,35" fill="none" stroke="#D48C70" stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round" />
-        <polyline points="50,40 35,48 28,40" fill="none" stroke="#4A4641" stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round" />
-        <!-- 狂奔雙腿 -->
-        <polyline class="leg-front" points="48,58 64,68 58,84" fill="none" stroke="#4A4641" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" />
-        <polyline class="leg-back" points="48,58 34,68 24,62" fill="none" stroke="#8C857B" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" />
+        <polyline points="52,40 68,46 75,36" fill="none" stroke="#D48C70" stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round" />
+        <polyline points="52,40 36,48 30,38" fill="none" stroke="#4A4641" stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round" />
+        
+        <!-- 旋風風火輪雙腿 -->
+        <g class="cyclone-wheel">
+          <ellipse cx="52" cy="74" rx="20" ry="10" fill="none" stroke="#8C857B" stroke-width="3" stroke-dasharray="6,4" />
+          <ellipse cx="52" cy="74" rx="14" ry="6" fill="none" stroke="#D48C70" stroke-width="2.5" stroke-dasharray="4,3" />
+          <path d="M36,74 Q52,60 68,74 Q52,88 36,74 Z" fill="#E5E0D8" opacity="0.6" />
+        </g>
       </svg>
     </div>
   </div>
 
   <script>
-    // ====== 輕柔提示音效產生器 (無需外部音檔) ======
+    // ====== 持續循環提醒音效系統 ======
     let audioCtx = null;
+    let chimeIntervalTimer = null;
+
     function unlockAudio() {
       if (!audioCtx) {
         audioCtx = new (window.AudioContext || window.webkitAudioContext)();
@@ -546,7 +518,7 @@
       }
     }
 
-    function playChime(type = 'water') {
+    function playSingleChime(type = 'water') {
       try {
         unlockAudio();
         const now = audioCtx.currentTime;
@@ -557,29 +529,45 @@
 
         if (type === 'water') {
           osc.type = 'sine';
-          osc.frequency.setValueAtTime(523.25, now); // C5
-          osc.frequency.exponentialRampToValueAtTime(659.25, now + 0.15); // E5
-          gain.gain.setValueAtTime(0.15, now);
+          osc.frequency.setValueAtTime(523.25, now);
+          osc.frequency.exponentialRampToValueAtTime(659.25, now + 0.15);
+          gain.gain.setValueAtTime(0.18, now);
           gain.gain.exponentialRampToValueAtTime(0.001, now + 0.6);
           osc.start(now);
           osc.stop(now + 0.6);
         } else {
           osc.type = 'triangle';
-          osc.frequency.setValueAtTime(587.33, now); // D5
-          osc.frequency.setValueAtTime(783.99, now + 0.15); // G5
-          gain.gain.setValueAtTime(0.15, now);
-          gain.gain.exponentialRampToValueAtTime(0.001, now + 0.5);
+          osc.frequency.setValueAtTime(587.33, now);
+          osc.frequency.setValueAtTime(783.99, now + 0.18);
+          gain.gain.setValueAtTime(0.18, now);
+          gain.gain.exponentialRampToValueAtTime(0.001, now + 0.6);
           osc.start(now);
-          osc.stop(now + 0.5);
+          osc.stop(now + 0.6);
         }
       } catch (e) {
         console.log('音效等待互動解鎖');
       }
     }
 
-    // ====== 狀態管理與 LocalStorage ======
+    // 開始持續響鈴（直到手動停止）
+    function startContinuousChime(type) {
+      stopContinuousChime(); // 先清除舊的
+      playSingleChime(type); // 立即響一次
+      chimeIntervalTimer = setInterval(() => {
+        playSingleChime(type);
+      }, 1500); // 每 1.5 秒重複響一次，直到點擊
+    }
+
+    function stopContinuousChime() {
+      if (chimeIntervalTimer) {
+        clearInterval(chimeIntervalTimer);
+        chimeIntervalTimer = null;
+      }
+    }
+
+    // ====== 資料與狀態管理 ======
     const TODAY_KEY = new Date().toDateString();
-    let state = JSON.parse(localStorage.getItem('notion_healing_widget_v1')) || {
+    let state = JSON.parse(localStorage.getItem('notion_healing_widget_v2')) || {
       waterInterval: 45,
       flowerDate: TODAY_KEY,
       flowerCount: 0,
@@ -591,35 +579,31 @@
           timeStr: '11:30',
           minutes: 30,
           type: 'routine',
-          status: 'running', // 'running' | 'standby'
+          status: 'running',
           targetTimestamp: null
         }
       ]
     };
 
-    // 跨日重置開花數
     if (state.flowerDate !== TODAY_KEY) {
       state.flowerDate = TODAY_KEY;
       state.flowerCount = 0;
     }
 
     function saveState() {
-      localStorage.setItem('notion_healing_widget_v1', JSON.stringify(state));
+      localStorage.setItem('notion_healing_widget_v2', JSON.stringify(state));
     }
 
-    // 計算指定 HH:MM 的目標時間戳
     function computeTargetFromTimeStr(timeStr) {
       const [hh, mm] = timeStr.split(':').map(Number);
-      const now = new Date();
       const target = new Date();
       target.setHours(hh, mm, 0, 0);
-      if (target.getTime() <= now.getTime()) {
-        target.setDate(target.getDate() + 1); // 若今天已過，自動排到明天
+      if (target.getTime() <= Date.now()) {
+        target.setDate(target.getDate() + 1);
       }
       return target.getTime();
     }
 
-    // 初始化預設任務時間戳
     state.tasks.forEach(t => {
       if (t.status === 'running' && !t.targetTimestamp) {
         t.targetTimestamp = t.mode === 'time'
@@ -629,10 +613,40 @@
     });
     saveState();
 
+    // ====== 提醒佇列系統 (解決互相卡住問題) ======
+    let alertQueue = []; // 存放等待跳出的提醒類型: 'water' 或 task object
+    let currentAlert = null; // 當前正在顯示的提醒
+
+    function enqueueAlert(item) {
+      // 避免重複推入同一個
+      if (item === 'water') {
+        if (!alertQueue.includes('water') && currentAlert !== 'water') {
+          alertQueue.push('water');
+        }
+      } else {
+        if (!alertQueue.some(q => q && q.id === item.id) && (!currentAlert || currentAlert.id !== item.id)) {
+          alertQueue.push(item);
+        }
+      }
+      processQueue();
+    }
+
+    function processQueue() {
+      if (currentAlert !== null) return; // 畫面上有東西在顯示，等它點掉再處理下一個
+      if (alertQueue.length === 0) return;
+
+      currentAlert = alertQueue.shift(); // 取出下一個提醒
+
+      if (currentAlert === 'water') {
+        showWaterOverlayModal();
+      } else {
+        showTaskOverlayModal(currentAlert);
+      }
+    }
+
     // ====== 喝水輪播邏輯 ======
     let waterRunning = false;
     let waterRemainingSec = state.waterInterval * 60;
-    let waterAlerting = false;
 
     document.getElementById('waterIntervalInput').value = state.waterInterval;
     document.getElementById('flowerCount').textContent = state.flowerCount;
@@ -669,12 +683,11 @@
 
     function testWaterOverlay() {
       unlockAudio();
-      openWaterOverlay();
+      enqueueAlert('water');
     }
 
-    function openWaterOverlay() {
-      waterAlerting = true;
-      playChime('water');
+    function showWaterOverlayModal() {
+      startContinuousChime('water');
       const stage = document.getElementById('flowerStage');
       stage.classList.remove('watering', 'bloomed');
       document.getElementById('waterOverlaySub').textContent = '點擊下方小花盆，幫它澆水開花吧';
@@ -685,13 +698,15 @@
     function triggerWatering() {
       if (isWateringAnimating) return;
       isWateringAnimating = true;
+      stopContinuousChime(); // 停止持續響鈴
+
       const stage = document.getElementById('flowerStage');
       stage.classList.add('watering');
       document.getElementById('waterOverlaySub').textContent = '咕嚕咕嚕～小花正在吸收水分...';
 
       setTimeout(() => {
         stage.classList.add('bloomed');
-        document.getElementById('waterOverlaySub').textContent = '🌸 開花了！開始下一輪喝水倒數';
+        document.getElementById('waterOverlaySub').textContent = '🌸 開花了！';
         state.flowerCount += 1;
         document.getElementById('flowerCount').textContent = state.flowerCount;
         saveState();
@@ -701,14 +716,13 @@
         document.getElementById('waterOverlay').classList.remove('active');
         waterRemainingSec = state.waterInterval * 60;
         updateWaterDisplay();
-        waterAlerting = false;
         isWateringAnimating = false;
+        currentAlert = null;
+        processQueue(); // 檢查佇列是否有下一個提醒
       }, 1800);
     }
 
     // ====== 彈性任務邏輯 ======
-    let activeTriggeredTaskId = null;
-
     function toggleTimeInputMode() {
       const mode = document.getElementById('taskModeSelect').value;
       if (mode === 'time') {
@@ -778,30 +792,34 @@
       renderTasks();
     }
 
-    function openTaskOverlay(task) {
-      if (activeTriggeredTaskId) return;
-      activeTriggeredTaskId = task.id;
-      playChime('task');
+    function testTaskOverlay(task) {
+      unlockAudio();
+      enqueueAlert(task);
+    }
+
+    function showTaskOverlayModal(task) {
+      startContinuousChime('task');
       document.getElementById('taskOverlayTitle').textContent = `⏰ ${task.name}`;
-      document.getElementById('taskOverlaySub').textContent = '點擊下方狂奔小人，代表你收到並處理囉！';
+      document.getElementById('taskOverlaySub').textContent = '點擊下方奔跑小人，確認處理完成！';
       document.getElementById('runnerStage').classList.remove('runner-finished');
       document.getElementById('taskOverlay').classList.add('active');
     }
 
     function completeTriggeredTask() {
-      if (!activeTriggeredTaskId) return;
+      if (!currentAlert || currentAlert === 'water') return;
+      stopContinuousChime(); // 停止持續響鈴
+
       const stage = document.getElementById('runnerStage');
       stage.classList.add('runner-finished');
-      document.getElementById('taskOverlaySub').textContent = '✨ 太棒了！使命必達！';
+      document.getElementById('taskOverlaySub').textContent = '✨ 使命必達！';
 
-      const idx = state.tasks.findIndex(t => t.id === activeTriggeredTaskId);
+      const taskToComplete = currentAlert;
+      const idx = state.tasks.findIndex(t => t.id === taskToComplete.id);
       if (idx !== -1) {
         const task = state.tasks[idx];
         if (task.type === 'once') {
-          // 一次性任務：完成後自動消失
           state.tasks.splice(idx, 1);
         } else {
-          // 例行公事：保留在清單，轉為待命可微調時間狀態
           task.status = 'standby';
           task.targetTimestamp = null;
         }
@@ -810,8 +828,9 @@
 
       setTimeout(() => {
         document.getElementById('taskOverlay').classList.remove('active');
-        activeTriggeredTaskId = null;
+        currentAlert = null;
         renderTasks();
+        processQueue(); // 檢查佇列是否有下一個提醒
       }, 700);
     }
 
@@ -876,7 +895,7 @@
               <div class="task-countdown" id="cd-${task.id}">${statusText}</div>
             </div>
             <div class="task-actions">
-              <button class="btn-icon" title="試看狂奔提醒" onclick='openTaskOverlay(${JSON.stringify(task)})'>▶</button>
+              <button class="btn-icon" title="試看狂奔提醒" onclick='testTaskOverlay(${JSON.stringify(task)})'>▶</button>
               <button class="btn-icon" title="刪除" onclick="deleteTask('${task.id}')">✕</button>
             </div>
           </div>
@@ -891,12 +910,13 @@
     // ====== 主計時器每秒巡檢 ======
     setInterval(() => {
       // 1. 喝水倒數
-      if (waterRunning && !waterAlerting) {
+      if (waterRunning) {
         if (waterRemainingSec > 0) {
           waterRemainingSec--;
           updateWaterDisplay();
         } else {
-          openWaterOverlay();
+          enqueueAlert('water');
+          waterRemainingSec = state.waterInterval * 60; // 先暫置重置，等使用者按完後可以看需求，或保持迴圈
         }
       }
 
@@ -910,14 +930,14 @@
             const scheduleDesc = task.mode === 'time' ? `目標 ${task.timeStr}` : `每 ${task.minutes} 分鐘`;
             cdEl.textContent = `${scheduleDesc} ・ ${formatRemaining(diff)}`;
           }
-          if (diff <= 0 && !waterAlerting && !activeTriggeredTaskId) {
-            openTaskOverlay(task);
+          if (diff <= 0) {
+            // 時間到，推入佇列排隊
+            enqueueAlert(task);
           }
         }
       });
     }, 1000);
 
-    // 初始渲染
     renderTasks();
   </script>
 </body>
