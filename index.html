@@ -502,7 +502,7 @@
           <div style="font-size: 12px; color: var(--text-sub);">距離下次喝水</div>
           <div class="timer-big" id="waterTimerDisplay">45:00</div>
           <div class="water-btn-row">
-            <button class="btn-sage" id="waterToggleBtn" onclick="toggleWater()">啟動輪播</button>
+            <button class="btn-sage" id="waterToggleBtn" onclick="toggleWater()">啟動</button>
             <button class="btn-ghost" onclick="testWaterOverlay()">試看</button>
           </div>
         </div>
@@ -962,13 +962,13 @@
       titleText.textContent = '🌱 小花盆出現了！';
       subText.textContent = '小貓退回陽光下，準備一起看小花長大...';
 
-      // 階段 3 (1.5s)：水滴緩緩落下澆花
+      // 階段 3 (3.2s)：水滴緩緩落下澆花
       setTimeout(() => {
         stage.classList.add('phase-watering');
         subText.textContent = '💧 清水慢慢滲進土壤裡，你也喝口水吧～';
       }, 1100);
 
-      // 階段 4 (3.2s)：花朵緩慢盛開 ＋ Bling Bling 閃亮音效
+      // 階段 4 (5.8s)：花朵緩慢盛開 ＋ Bling Bling 閃亮音效
       setTimeout(() => {
         stage.classList.add('phase-bloomed');
         playBlingBlingSound();
@@ -979,7 +979,7 @@
         saveState();
       }, 2500);
 
-      // 階段 5 (6.8s)：完整欣賞完畢，回到主畫面繼續計時
+      // 階段 5 (10.8s)：完整欣賞完畢，回到主畫面繼續計時
       setTimeout(() => {
         document.getElementById('waterOverlay').classList.remove('active');
         waterRemainingSec = state.waterInterval * 60;
