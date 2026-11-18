@@ -75,15 +75,24 @@
       color: var(--text-sub);
     }
 
-    .water-display {
+    /* 喝水主區塊：左側倒數 ＋ 右側真正的小橘貓曬太陽插畫 */
+    .water-main-box {
       display: flex;
-      align-items: center;
+      align-items: stretch;
       justify-content: space-between;
       background: var(--bg-input);
       border: 1px solid var(--border-soft);
-      border-radius: 12px;
-      padding: 14px 16px;
+      border-radius: 14px;
+      padding: 12px 14px;
       margin-bottom: 12px;
+      gap: 10px;
+    }
+
+    .water-timer-col {
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      flex: 1;
     }
 
     .timer-big {
@@ -92,19 +101,50 @@
       font-variant-numeric: tabular-nums;
       letter-spacing: 1px;
       color: var(--text-main);
+      line-height: 1.1;
+      margin: 4px 0 8px 0;
     }
 
-    /* 休息區塊附帶常駐小貓預覽 */
-    .water-preview-banner {
-      background: var(--bg-page);
-      border: 1px solid var(--border-soft);
-      border-radius: 10px;
-      padding: 8px 12px;
+    .water-btn-row {
       display: flex;
+      gap: 6px;
       align-items: center;
-      justify-content: space-between;
-      font-size: 12.5px;
-      color: var(--text-sub);
+    }
+
+    /* 常駐小橘貓曬太陽迷你場景框 */
+    .mini-cat-corner {
+      width: 128px;
+      height: 104px;
+      border-radius: 12px;
+      background: linear-gradient(180deg, #FFFDF8 0%, #F9F0DF 75%, #EAE2D3 75%, #EAE2D3 100%);
+      border: 1px solid var(--border-soft);
+      overflow: hidden;
+      flex-shrink: 0;
+      position: relative;
+    }
+
+    .mini-sun-rays {
+      transform-origin: 26px 24px;
+      animation: rotateSun 20s linear infinite;
+    }
+    .mini-cat-tail {
+      transform-origin: 104px 76px;
+      animation: catTailWag 3s ease-in-out infinite alternate;
+    }
+    .mini-cat-breath {
+      transform-origin: 78px 78px;
+      animation: catBreathing 2.8s ease-in-out infinite alternate;
+    }
+    @keyframes catBreathing {
+      0% { transform: scaleY(1); }
+      100% { transform: scaleY(1.04); }
+    }
+    .mini-zzz {
+      animation: floatZzz 3.2s ease-in-out infinite;
+    }
+    @keyframes floatZzz {
+      0%, 100% { opacity: 0.2; transform: translate(0, 0); }
+      50% { opacity: 0.85; transform: translate(3px, -4px); }
     }
 
     .water-controls {
@@ -113,7 +153,6 @@
       gap: 8px;
       font-size: 13px;
       color: var(--text-sub);
-      margin-top: 10px;
     }
 
     input[type="number"], input[type="text"], input[type="time"], select {
@@ -126,21 +165,15 @@
       outline: none;
     }
 
-    input:focus, select:focus {
-      border-color: var(--accent-sage);
-    }
-
-    .input-mini {
-      width: 60px;
-      text-align: center;
-    }
+    input:focus, select:focus { border-color: var(--accent-sage); }
+    .input-mini { width: 58px; text-align: center; }
 
     button {
       cursor: pointer;
       border: none;
       border-radius: 8px;
-      padding: 7px 14px;
-      font-size: 13px;
+      padding: 6px 12px;
+      font-size: 12.5px;
       font-weight: 500;
       transition: all 0.2s ease;
     }
@@ -157,10 +190,11 @@
       color: var(--text-sub);
     }
     .btn-ghost:hover {
-      background-color: var(--bg-input);
+      background-color: var(--bg-page);
       color: var(--text-main);
     }
 
+    /* 彈性任務區塊 */
     .add-task-box {
       background: var(--bg-input);
       border: 1px solid var(--border-soft);
@@ -172,19 +206,10 @@
       margin-bottom: 12px;
     }
 
-    .form-row {
-      display: flex;
-      gap: 8px;
-      align-items: center;
-    }
-
+    .form-row { display: flex; gap: 8px; align-items: center; }
     .form-row input[type="text"] { flex: 1; }
 
-    .task-list {
-      display: flex;
-      flex-direction: column;
-      gap: 8px;
-    }
+    .task-list { display: flex; flex-direction: column; gap: 8px; }
 
     .task-item {
       background: var(--bg-input);
@@ -196,18 +221,8 @@
       gap: 8px;
     }
 
-    .task-top {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
-
-    .task-info {
-      display: flex;
-      flex-direction: column;
-      gap: 2px;
-    }
-
+    .task-top { display: flex; justify-content: space-between; align-items: center; }
+    .task-info { display: flex; flex-direction: column; gap: 2px; }
     .task-name {
       font-size: 14px;
       font-weight: 600;
@@ -231,12 +246,7 @@
       font-variant-numeric: tabular-nums;
     }
 
-    .task-actions {
-      display: flex;
-      align-items: center;
-      gap: 6px;
-    }
-
+    .task-actions { display: flex; align-items: center; gap: 6px; }
     .btn-icon {
       padding: 4px 8px;
       font-size: 12px;
@@ -244,10 +254,7 @@
       color: var(--text-sub);
       border-radius: 6px;
     }
-    .btn-icon:hover {
-      background: #E5DFD7;
-      color: var(--text-main);
-    }
+    .btn-icon:hover { background: #E5DFD7; color: var(--text-main); }
 
     .routine-adjust {
       display: flex;
@@ -275,15 +282,8 @@
       text-align: center;
     }
 
-    .overlay.active {
-      display: flex;
-      animation: fadeIn 0.4s ease;
-    }
-
-    @keyframes fadeIn {
-      from { opacity: 0; }
-      to { opacity: 1; }
-    }
+    .overlay.active { display: flex; animation: fadeIn 0.35s ease; }
+    @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 
     .overlay-title {
       font-size: 19px;
@@ -295,16 +295,15 @@
     .overlay-sub {
       font-size: 13.5px;
       color: var(--text-sub);
-      margin-bottom: 18px;
-      min-height: 20px;
-      transition: all 0.3s ease;
+      margin-bottom: 16px;
+      min-height: 22px;
     }
 
-    /* ===== 貓咪敲螢幕與花園劇場舞台 ===== */
+    /* ===== 劇場舞台：貓咪走近敲螢幕 -> 花朵出現 -> 澆水綻放 ===== */
     .garden-stage {
-      width: 280px;
-      height: 210px;
-      background: linear-gradient(180deg, #F7F3EC 0%, #EFE9DF 78%, #E5DDD0 78%, #E5DDD0 100%);
+      width: 290px;
+      height: 220px;
+      background: linear-gradient(180deg, #FFFDF8 0%, #F7EFE0 76%, #E6DDD0 76%, #E6DDD0 100%);
       border: 2px solid var(--border-soft);
       border-radius: 24px;
       display: flex;
@@ -313,116 +312,127 @@
       cursor: pointer;
       position: relative;
       overflow: hidden;
-      margin-bottom: 14px;
-      box-shadow: 0 8px 20px rgba(74, 70, 65, 0.06);
-      transition: transform 0.25s ease;
+      margin-bottom: 12px;
+      box-shadow: 0 10px 25px rgba(74, 70, 65, 0.08);
     }
-    .garden-stage:hover { transform: scale(1.02); }
 
-    /* 太陽與光暈 */
-    .sun-group {
-      transform: translate(12px, -6px) scale(1);
-      opacity: 1;
-      transition: transform 2s cubic-bezier(0.22, 1, 0.36, 1);
-    }
     .sun-rays {
-      transform-origin: 55px 48px;
+      transform-origin: 48px 44px;
       animation: rotateSun 18s linear infinite;
     }
-    @keyframes rotateSun {
-      from { transform: rotate(0deg); }
-      to { transform: rotate(360deg); }
+    @keyframes rotateSun { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+
+    /* 階段一：小貓從右後方走到螢幕正中央放大，並伸爪敲螢幕 */
+    .stage-cat {
+      transform-origin: 145px 145px;
+      transition: transform 1.2s cubic-bezier(0.22, 1, 0.36, 1);
     }
 
-    .sunbeam {
-      opacity: 0.35;
+    /* 剛彈出提醒時：小貓走近鏡頭、放大靠近螢幕 */
+    .phase-knock .stage-cat {
+      animation: catApproachScreen 1.4s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+    }
+    @keyframes catApproachScreen {
+      0% { transform: translate(65px, 12px) scale(0.75); }
+      50% { transform: translate(25px, 6px) scale(1.05) rotate(-3deg); }
+      100% { transform: translate(0px, 4px) scale(1.32) rotate(0deg); }
     }
 
-    /* 水滴動畫 */
-    .water-drop {
+    /* 貓咪敲螢幕的小爪子與波紋 */
+    .knock-paw {
       opacity: 0;
-      transform: translateY(-22px);
+      transform-origin: 112px 158px;
     }
-    .watering .water-drop {
-      animation: slowDropFall 1.2s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+    .phase-knock .knock-paw {
+      animation: pawKnockGlass 0.45s ease-in-out 1.2s infinite alternate;
+    }
+    @keyframes pawKnockGlass {
+      0% { opacity: 1; transform: translate(0, 0) scale(0.95); }
+      100% { opacity: 1; transform: translate(-4px, -6px) scale(1.12); }
+    }
+
+    .knock-ripple {
+      opacity: 0;
+      transform-origin: 102px 146px;
+    }
+    .phase-knock .knock-ripple {
+      animation: glassRipple 0.9s ease-out 1.2s infinite;
+    }
+    @keyframes glassRipple {
+      0% { opacity: 0.9; transform: scale(0.4); }
+      100% { opacity: 0; transform: scale(1.5); }
+    }
+
+    /* 階段二之後：小貓退回右側花盆旁，開心地搖尾巴看花與太陽 */
+    .phase-garden .stage-cat {
+      transform: translate(62px, 14px) scale(0.88);
+    }
+
+    .cat-tail {
+      transform-origin: 185px 152px;
+      animation: catTailWag 2.6s ease-in-out infinite alternate;
+    }
+    @keyframes catTailWag {
+      0% { transform: rotate(-8deg); }
+      100% { transform: rotate(15deg); }
+    }
+
+    /* 花盆與植物：在敲門階段是完全隱藏的 (opacity: 0) */
+    .flower-pot-group {
+      opacity: 0;
+      transform: translateY(25px) scale(0.85);
+      transform-origin: 95px 165px;
+      transition: opacity 0.8s ease, transform 0.9s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+    .phase-garden .flower-pot-group {
+      opacity: 1;
+      transform: translateY(0) scale(1);
+    }
+
+    /* 水滴 */
+    .water-drop { opacity: 0; transform: translateY(-20px); }
+    .phase-watering .water-drop {
+      animation: slowDropFall 1.3s cubic-bezier(0.4, 0, 0.2, 1) forwards;
     }
     @keyframes slowDropFall {
-      0% { opacity: 0; transform: translateY(-22px) scale(0.8); }
-      25% { opacity: 1; transform: translateY(-8px) scale(1); }
+      0% { opacity: 0; transform: translateY(-20px) scale(0.8); }
+      25% { opacity: 1; transform: translateY(-6px) scale(1); }
       80% { opacity: 1; transform: translateY(22px) scale(1); }
       100% { opacity: 0; transform: translateY(32px) scale(0.7); }
     }
 
-    /* 朵朵開花動畫 */
+    /* 花苞變花朵 */
+    .flower-bud {
+      transform-origin: 95px 96px;
+      transition: opacity 0.6s ease, transform 0.6s ease;
+    }
+    .phase-bloomed .flower-bud {
+      opacity: 0;
+      transform: scale(0.2);
+    }
+
     .flower-head {
-      transform-origin: 105px 90px;
-      transform: scale(0.1) rotate(-25deg);
+      transform-origin: 95px 92px;
+      transform: scale(0.1) rotate(-30deg);
       opacity: 0;
       transition: transform 1.8s cubic-bezier(0.22, 1, 0.36, 1), opacity 1.2s ease;
     }
-    .bloomed .flower-head {
+    .phase-bloomed .flower-head {
       transform: scale(1) rotate(0deg);
       opacity: 1;
     }
 
-    /* Bling 閃爍 */
-    .sparkle {
-      opacity: 0;
-      transform-box: fill-box;
-      transform-origin: center;
-    }
-    .bloomed .sparkle-1 { animation: blingTwinkle 1.6s ease-in-out 0.2s infinite; }
-    .bloomed .sparkle-2 { animation: blingTwinkle 1.6s ease-in-out 0.6s infinite; }
-    .bloomed .sparkle-3 { animation: blingTwinkle 1.6s ease-in-out 1.0s infinite; }
-
+    /* Bling 閃亮星星 */
+    .sparkle { opacity: 0; transform-box: fill-box; transform-origin: center; }
+    .phase-bloomed .sparkle-1 { animation: blingTwinkle 1.5s ease-in-out 0.2s infinite; }
+    .phase-bloomed .sparkle-2 { animation: blingTwinkle 1.5s ease-in-out 0.6s infinite; }
+    .phase-bloomed .sparkle-3 { animation: blingTwinkle 1.5s ease-in-out 1.0s infinite; }
     @keyframes blingTwinkle {
       0%, 100% { opacity: 0; transform: scale(0.3) rotate(0deg); }
-      50% { opacity: 1; transform: scale(1.15) rotate(20deg); }
+      50% { opacity: 1; transform: scale(1.2) rotate(20deg); }
     }
 
-    /* 貓咪走路與敲螢幕動畫 */
-    .interactive-cat {
-      transform-origin: 205px 160px;
-      transition: transform 1.5s cubic-bezier(0.25, 1, 0.5, 1);
-    }
-
-    /* 步驟一：貓咪從睡覺醒來、往前走並敲螢幕 */
-    .cat-walking .interactive-cat {
-      animation: catWalkForward 1.5s ease-in-out forwards;
-    }
-    @keyframes catWalkForward {
-      0% { transform: translate(0, 0) scale(1); }
-      60% { transform: translate(-70px, -20px) scale(1.35) rotate(-5deg); }
-      100% { transform: translate(-65px, -18px) scale(1.4) rotate(0deg); }
-    }
-
-    .cat-paw-tap {
-      opacity: 0;
-    }
-    .cat-walking .cat-paw-tap {
-      animation: pawTapAnim 0.4s ease-in-out 1.2s infinite alternate;
-    }
-    @keyframes pawTapAnim {
-      0% { opacity: 1; transform: translate(0, 0); }
-      100% { opacity: 1; transform: translate(-6px, -4px) rotate(-10deg); }
-    }
-
-    /* 步驟二：貓咪開心地轉頭看花與太陽 */
-    .cat-watching .interactive-cat {
-      transform: translate(-45px, -10px) scale(1.25) rotate(6deg);
-      transition: transform 0.8s cubic-bezier(0.34, 1.56, 0.64, 1);
-    }
-
-    .cat-tail {
-      transform-origin: 235px 158px;
-      animation: catTailWag 2.8s ease-in-out infinite alternate;
-    }
-    @keyframes catTailWag {
-      0% { transform: rotate(-8deg); }
-      100% { transform: rotate(14deg); }
-    }
-
-    /* 旋風奔跑小人動畫 */
+    /* ===== 旋風奔跑小人動畫 ===== */
     .runner-stage {
       width: 240px;
       height: 140px;
@@ -439,9 +449,7 @@
       margin-bottom: 16px;
     }
 
-    .runner-svg {
-      animation: runBodyBounce 0.22s infinite alternate ease-in-out;
-    }
+    .runner-svg { animation: runBodyBounce 0.22s infinite alternate ease-in-out; }
     @keyframes runBodyBounce {
       0% { transform: translateY(1px) rotate(-4deg); }
       100% { transform: translateY(-6px) rotate(4deg); }
@@ -457,12 +465,7 @@
       100% { transform: rotate(360deg) scale(0.95); }
     }
 
-    .speed-lines {
-      position: absolute;
-      width: 100%;
-      height: 100%;
-      pointer-events: none;
-    }
+    .speed-lines { position: absolute; width: 100%; height: 100%; pointer-events: none; }
     .speed-line {
       stroke: var(--text-sub);
       stroke-width: 2;
@@ -481,37 +484,78 @@
       transform: translateY(0) scale(1.1);
       transition: transform 0.3s ease;
     }
-    .runner-finished .cyclone-wheel {
-      animation: none;
-      opacity: 0.3;
-    }
+    .runner-finished .cyclone-wheel { animation: none; opacity: 0.3; }
   </style>
 </head>
 <body>
 
   <div class="widget-container">
-    <!-- 區塊一：固定喝水輪播 -->
+    <!-- 區塊一：固定喝水輪播（右側直接有一隻曬太陽的小橘貓插畫） -->
     <div class="card">
       <div class="card-header">
         <div class="card-title">💧 喝水療癒輪播</div>
         <div class="badge">今日開花：<span id="flowerCount">0</span> 朵 🌸</div>
       </div>
 
-      <div class="water-display">
-        <div>
-          <div style="font-size: 12px; color: var(--text-sub); margin-bottom: 2px;">距離下次喝水</div>
+      <div class="water-main-box">
+        <div class="water-timer-col">
+          <div style="font-size: 12px; color: var(--text-sub);">距離下次喝水</div>
           <div class="timer-big" id="waterTimerDisplay">45:00</div>
+          <div class="water-btn-row">
+            <button class="btn-sage" id="waterToggleBtn" onclick="toggleWater()">啟動輪播</button>
+            <button class="btn-ghost" onclick="testWaterOverlay()">試看提醒</button>
+          </div>
         </div>
-        <div style="display: flex; flex-direction: column; gap: 6px; align-items: flex-end;">
-          <button class="btn-sage" id="waterToggleBtn" onclick="toggleWater()">啟動輪播</button>
-          <button class="btn-ghost" style="padding: 4px 10px; font-size: 11px;" onclick="testWaterOverlay()">試看澆花</button>
-        </div>
-      </div>
 
-      <!-- 結合常駐小貓曬太陽的提示預覽列 -->
-      <div class="water-preview-banner">
-        <span>🐱 小橘貓正在旁邊慵懶曬太陽陪你倒數</span>
-        <span style="font-size: 14px;">☀️</span>
+        <!-- 真正的小橘貓躺著曬太陽 SVG 插畫 -->
+        <div class="mini-cat-corner" title="小橘貓正在曬太陽陪你倒數">
+          <svg width="128" height="104" viewBox="0 0 128 104">
+            <!-- 暖陽與旋轉光芒 -->
+            <circle cx="26" cy="24" r="14" fill="#FFE699" opacity="0.5" />
+            <circle cx="26" cy="24" r="9" fill="#F4C96B" />
+            <g class="mini-sun-rays" stroke="#F4C96B" stroke-width="1.8" stroke-linecap="round">
+              <line x1="26" y1="9" x2="26" y2="12" />
+              <line x1="26" y1="36" x2="26" y2="39" />
+              <line x1="11" y1="24" x2="14" y2="24" />
+              <line x1="38" y1="24" x2="41" y2="24" />
+              <line x1="15" y1="13" x2="18" y2="16" />
+              <line x1="34" y1="32" x2="37" y2="35" />
+            </g>
+
+            <!-- 小草叢 -->
+            <path d="M16,78 Q18,70 21,78 M20,78 Q23,72 25,78" stroke="#8FA893" stroke-width="2" fill="none" stroke-linecap="round" />
+
+            <!-- 躺著睡覺的小橘貓 -->
+            <g class="mini-cat-breath">
+              <!-- 搖擺的尾巴 -->
+              <path class="mini-cat-tail" d="M104,76 Q118,70 115,59" fill="none" stroke="#E0A96D" stroke-width="4" stroke-linecap="round" />
+              <!-- 圓滾滾身體 -->
+              <ellipse cx="82" cy="76" rx="24" ry="12" fill="#E6B47B" />
+              <!-- 背部虎斑紋 -->
+              <path d="M77,64 Q79,69 81,64 M84,64 Q86,69 88,64" stroke="#C48B4E" stroke-width="1.8" fill="none" stroke-linecap="round" />
+              <!-- 伸出來的兩隻小前腳 -->
+              <ellipse cx="54" cy="84" rx="8" ry="3.8" fill="#F2CFA5" />
+              <ellipse cx="62" cy="86" rx="7.5" ry="3.5" fill="#E6B47B" />
+              <!-- 貓咪圓頭 -->
+              <circle cx="62" cy="69" r="11.5" fill="#E6B47B" />
+              <!-- 貓耳朵 -->
+              <polygon points="52,62 54,52 60,59" fill="#E6B47B" />
+              <polygon points="65,59 70,52 73,62" fill="#E6B47B" />
+              <polygon points="54,61 55,55 58,59" fill="#F4C7B8" />
+              <polygon points="66,59 69,55 71,61" fill="#F4C7B8" />
+              <!-- 閉眼安詳睡覺 -->
+              <path d="M55,69 Q58,71.5 60,69" stroke="#5C4938" stroke-width="1.5" fill="none" stroke-linecap="round" />
+              <path d="M64,69 Q67,71.5 69,69" stroke="#5C4938" stroke-width="1.5" fill="none" stroke-linecap="round" />
+              <!-- 腮紅與小粉鼻 -->
+              <circle cx="55" cy="72" r="2" fill="#E89B8E" opacity="0.7" />
+              <circle cx="69" cy="72" r="2" fill="#E89B8E" opacity="0.7" />
+              <polygon points="61,71 63,71 62,73" fill="#D47A6A" />
+            </g>
+
+            <!-- 飄浮 Zzz 符號 -->
+            <text class="mini-zzz" x="76" y="48" font-size="10" font-weight="bold" fill="#8C857B">zZ</text>
+          </svg>
+        </div>
       </div>
 
       <div class="water-controls">
@@ -530,7 +574,7 @@
 
       <div class="add-task-box">
         <div class="form-row">
-          <input type="text" id="taskNameInput" placeholder="輸入事項（例 : 訂午餐、收衣服）" />
+          <input type="text" id="taskNameInput" placeholder="輸入事項（例：訂午餐、收衣服）" />
         </div>
         <div class="form-row">
           <select id="taskModeSelect" onchange="toggleTimeInputMode()">
@@ -554,93 +598,106 @@
     </div>
   </div>
 
-  <!-- 互動遮罩 1：貓咪敲螢幕與花園劇場 -->
+  <!-- 互動遮罩 1：貓咪走近敲螢幕 -> 出現花朵 -> 澆水綻放 -->
   <div class="overlay" id="waterOverlay">
-    <div class="overlay-title" id="overlayTitle">🐱 貓貓來敲門囉！</div>
-    <div class="overlay-sub" id="waterOverlaySub">點擊下方花園，和小貓一起賞花喝水吧</div>
+    <div class="overlay-title" id="overlayTitle">🐱 叩、叩、叩！</div>
+    <div class="overlay-sub" id="waterOverlaySub">小橘貓走過來敲敲螢幕叫你喝水囉！點一下畫面回應牠</div>
     
-    <div class="garden-stage" id="gardenStage" onclick="triggerWatering()">
-      <svg width="280" height="210" viewBox="0 0 280 210">
-        <defs>
-          <linearGradient id="sunBeamGrad" x1="0" y1="0" x2="1" y2="1">
-            <stop offset="0%" stop-color="#FFE699" stop-opacity="0.7" />
-            <stop offset="100%" stop-color="#FFE699" stop-opacity="0" />
-          </linearGradient>
-        </defs>
-
-        <!-- 暖陽斜射光束 -->
-        <polygon class="sunbeam" points="45,35 120,25 265,175 110,185" fill="url(#sunBeamGrad)" />
-
+    <div class="garden-stage phase-knock" id="gardenStage" onclick="triggerWatering()">
+      <svg width="290" height="220" viewBox="0 0 290 220">
         <!-- 溫暖的太陽 -->
-        <g class="sun-group">
-          <circle cx="55" cy="48" r="24" fill="#FFE699" opacity="0.45" />
-          <circle cx="55" cy="48" r="16" fill="#F4C96B" />
-          <g class="sun-rays" stroke="#F4C96B" stroke-width="2.5" stroke-linecap="round">
-            <line x1="55" y1="22" x2="55" y2="27" />
-            <line x1="55" y1="69" x2="55" y2="74" />
-            <line x1="29" y1="48" x2="34" y2="48" />
-            <line x1="76" y1="48" x2="81" y2="48" />
+        <circle cx="48" cy="44" r="24" fill="#FFE699" opacity="0.45" />
+        <circle cx="48" cy="44" r="15" fill="#F4C96B" />
+        <g class="sun-rays" stroke="#F4C96B" stroke-width="2.5" stroke-linecap="round">
+          <line x1="48" y1="18" x2="48" y2="23" />
+          <line x1="48" y1="65" x2="48" y2="70" />
+          <line x1="22" y1="44" x2="27" y2="44" />
+          <line x1="69" y1="44" x2="74" y2="44" />
+          <line x1="30" y1="26" x2="33" y2="29" />
+          <line x1="63" y1="59" x2="66" y2="62" />
+        </g>
+
+        <!-- 花盆與植物（一開始隱藏，點一下回應小貓後才冒出來！） -->
+        <g class="flower-pot-group">
+          <!-- 花盆 -->
+          <polygon points="72,145 118,145 112,178 78,178" fill="#D48C70" />
+          <rect x="68" y="138" width="54" height="8" rx="4" fill="#C27A5E" />
+          <!-- 莖與葉 -->
+          <path d="M95,138 Q93,115 95,94" stroke="#7A947E" stroke-width="4" fill="none" stroke-linecap="round" />
+          <path d="M95,123 Q77,116 75,126 Q83,133 95,126" fill="#8FA893" />
+          <path d="M95,113 Q113,106 115,116 Q107,123 95,116" fill="#8FA893" />
+
+          <!-- 未開的小花苞 -->
+          <g class="flower-bud">
+            <path d="M89,96 Q95,80 101,96 Q95,100 89,96 Z" fill="#E6B88A" />
+          </g>
+
+          <!-- 緩慢落下的水滴 -->
+          <g class="water-drop">
+            <path d="M95,48 Q102,60 95,64 Q88,60 95,48 Z" fill="#7FB3D5" />
+            <circle cx="93" cy="57" r="1.5" fill="#FFFFFF" opacity="0.85" />
+          </g>
+
+          <!-- 盛開的大花朵 -->
+          <g class="flower-head">
+            <circle cx="95" cy="74" r="13" fill="#F4D3AB" />
+            <circle cx="78" cy="86" r="13" fill="#F4D3AB" />
+            <circle cx="112" cy="86" r="13" fill="#F4D3AB" />
+            <circle cx="84" cy="103" r="13" fill="#F4D3AB" />
+            <circle cx="106" cy="103" r="13" fill="#F4D3AB" />
+            <circle cx="95" cy="90" r="10" fill="#E8A55A" />
+          </g>
+
+          <!-- Bling 閃亮星芒 -->
+          <g fill="#F2B84B">
+            <path class="sparkle sparkle-1" d="M64,68 L66,73 L71,75 L66,77 L64,82 L62,77 L57,75 L62,73 Z" />
+            <path class="sparkle sparkle-2" d="M126,64 L128,69 L133,71 L128,73 L126,78 L124,73 L119,71 L124,69 Z" />
+            <path class="sparkle sparkle-3" d="M95,48 L96.5,52 L100.5,53.5 L96.5,55 L95,59 L93.5,55 L89.5,53.5 L93.5,52 Z" />
           </g>
         </g>
 
-        <!-- 花盆 -->
-        <polygon points="82,142 128,142 122,175 88,175" fill="#D48C70" />
-        <rect x="78" y="135" width="54" height="8" rx="4" fill="#C27A5E" />
+        <!-- 主角小橘貓（會走近螢幕敲門，之後退到花旁一起賞花） -->
+        <g class="stage-cat">
+          <!-- 尾巴 -->
+          <path class="cat-tail" d="M185,152 Q204,142 199,126" fill="none" stroke="#E0A96D" stroke-width="5.5" stroke-linecap="round" />
+          <!-- 身體 -->
+          <ellipse cx="158" cy="154" rx="28" ry="16" fill="#E6B47B" />
+          <path d="M152,139 Q154,145 156,139 M160,139 Q162,145 164,139" stroke="#C48B4E" stroke-width="2" fill="none" stroke-linecap="round" />
+          <!-- 支撐前腳 -->
+          <ellipse cx="132" cy="166" rx="10" ry="4.5" fill="#E6B47B" />
 
-        <!-- 植物莖與葉 -->
-        <path d="M105,135 Q103,112 105,90" stroke="#7A947E" stroke-width="4" fill="none" stroke-linecap="round" />
-        <path d="M105,120 Q87,113 85,123 Q93,130 105,123" fill="#8FA893" />
-        <path d="M105,110 Q123,103 125,113 Q117,120 105,113" fill="#8FA893" />
+          <!-- 貓咪大頭（正面朝向你） -->
+          <circle cx="134" cy="136" r="17" fill="#E6B47B" />
+          <!-- 耳朵 -->
+          <polygon points="119,125 121,111 130,121" fill="#E6B47B" />
+          <polygon points="138,121 146,111 149,125" fill="#E6B47B" />
+          <polygon points="121,124 122,115 128,121" fill="#F4C7B8" />
+          <polygon points="140,121 145,115 147,124" fill="#F4C7B8" />
 
-        <!-- 緩慢落下的水滴 -->
-        <g class="water-drop">
-          <path d="M105,46 Q112,58 105,62 Q98,58 105,46 Z" fill="#7FB3D5" />
-          <circle cx="103" cy="55" r="1.5" fill="#FFFFFF" opacity="0.8" />
-        </g>
+          <!-- 圓滾滾亮晶晶大眼 -->
+          <circle cx="127" cy="135" r="2.6" fill="#4A4641" />
+          <circle cx="141" cy="135" r="2.6" fill="#4A4641" />
+          <circle cx="126.2" cy="134.2" r="0.9" fill="#FFFFFF" />
+          <circle cx="140.2" cy="134.2" r="0.9" fill="#FFFFFF" />
 
-        <!-- 盛開的大花朵 -->
-        <g class="flower-head">
-          <circle cx="105" cy="72" r="13" fill="#F4D3AB" />
-          <circle cx="88" cy="84" r="13" fill="#F4D3AB" />
-          <circle cx="122" cy="84" r="13" fill="#F4D3AB" />
-          <circle cx="94" cy="101" r="13" fill="#F4D3AB" />
-          <circle cx="116" cy="101" r="13" fill="#F4D3AB" />
-          <circle cx="105" cy="88" r="10" fill="#E8A55A" />
-        </g>
+          <!-- 腮紅、小鼻子與貓咪嘴 -->
+          <circle cx="122" cy="140" r="2.8" fill="#E89B8E" opacity="0.7" />
+          <circle cx="146" cy="140" r="2.8" fill="#E89B8E" opacity="0.7" />
+          <polygon points="132.5,139 135.5,139 134,141.5" fill="#D47A6A" />
+          <path d="M130,143 Q132,145 134,142.5 Q136,145 138,143" stroke="#5C4938" stroke-width="1.4" fill="none" stroke-linecap="round" />
 
-        <!-- Bling 閃亮星芒 -->
-        <g fill="#F2B84B">
-          <path class="sparkle sparkle-1" d="M74,66 L76,71 L81,73 L76,75 L74,80 L72,75 L67,73 L72,71 Z" />
-          <path class="sparkle sparkle-2" d="M136,62 L138,67 L143,69 L138,71 L136,76 L134,71 L129,69 L134,67 Z" />
-          <path class="sparkle sparkle-3" d="M105,46 L106.5,50 L110.5,51.5 L106.5,53 L105,57 L103.5,53 L99.5,51.5 L103.5,50 Z" />
-        </g>
+          <!-- 敲螢幕波紋圈圈 -->
+          <circle class="knock-ripple" cx="102" cy="146" r="14" fill="none" stroke="#D48C70" stroke-width="2" />
 
-        <!-- 小貓咪主體（會往前走並敲螢幕） -->
-        <g class="interactive-cat" id="interactiveCat">
-          <path class="cat-tail" d="M235,163 Q252,155 248,142" fill="none" stroke="#E0A96D" stroke-width="5" stroke-linecap="round" />
-          <ellipse cx="208" cy="162" rx="28" ry="14" fill="#E6B47B" />
-          <path d="M202,149 Q204,154 206,149 M210,149 Q212,154 214,149" stroke="#C48B4E" stroke-width="2" fill="none" stroke-linecap="round" />
-          
-          <!-- 前腳與敲螢幕的手掌 -->
-          <ellipse cx="176" cy="171" rx="10" ry="4.5" fill="#F2CFA5" />
-          <g class="cat-paw-tap">
-            <ellipse cx="168" cy="164" rx="6" ry="4" fill="#F2CFA5" />
+          <!-- 舉起來敲螢幕的貓掌與粉紅肉球 -->
+          <g class="knock-paw">
+            <ellipse cx="105" cy="150" rx="8" ry="6.5" fill="#F2CFA5" stroke="#E0A96D" stroke-width="1.2" />
+            <!-- 粉紅肉球 -->
+            <circle cx="105" cy="151" r="2.5" fill="#E89B8E" />
+            <circle cx="101" cy="147.5" r="1.2" fill="#E89B8E" />
+            <circle cx="105" cy="146.5" r="1.2" fill="#E89B8E" />
+            <circle cx="109" cy="147.5" r="1.2" fill="#E89B8E" />
           </g>
-
-          <circle cx="184" cy="154" r="13" fill="#E6B47B" />
-          <polygon points="173,146 175,135 182,143" fill="#E6B47B" />
-          <polygon points="187,143 193,135 196,146" fill="#E6B47B" />
-          <polygon points="175,145 176,138 180,143" fill="#F4C7B8" />
-          <polygon points="189,143 192,138 194,145" fill="#F4C7B8" />
-
-          <!-- 開心笑眼 -->
-          <g stroke="#5C4938" stroke-width="1.6" fill="none" stroke-linecap="round">
-            <path d="M177,154 Q180,151 182,154" />
-            <path d="M186,154 Q189,151 191,154" />
-          </g>
-          <circle cx="176" cy="157" r="2.2" fill="#E89B8E" opacity="0.7" />
-          <circle cx="192" cy="157" r="2.2" fill="#E89B8E" opacity="0.7" />
-          <polygon points="183,156 185,156 184,158" fill="#D47A6A" />
         </g>
       </svg>
     </div>
@@ -761,7 +818,7 @@
 
     // ====== 資料與狀態管理 ======
     const TODAY_KEY = new Date().toDateString();
-    let state = JSON.parse(localStorage.getItem('notion_healing_widget_v3')) || {
+    let state = JSON.parse(localStorage.getItem('notion_healing_widget_v4')) || {
       waterInterval: 45,
       flowerDate: TODAY_KEY,
       flowerCount: 0,
@@ -785,7 +842,7 @@
     }
 
     function saveState() {
-      localStorage.setItem('notion_healing_widget_v3', JSON.stringify(state));
+      localStorage.setItem('notion_healing_widget_v4', JSON.stringify(state));
     }
 
     function computeTargetFromTimeStr(timeStr) {
@@ -837,7 +894,7 @@
       }
     }
 
-    // ====== 喝水輪播與貓咪敲螢幕劇場 ======
+    // ====== 喝水輪播與四段式分鏡劇場 ======
     let waterRunning = false;
     let waterRemainingSec = state.waterInterval * 60;
 
@@ -879,16 +936,14 @@
       enqueueAlert('water');
     }
 
+    // 階段 1：只有貓咪走近敲螢幕（花盆還未出現）
     function showWaterOverlayModal() {
       startContinuousChime('water');
       const stage = document.getElementById('gardenStage');
-      const cat = document.getElementById('interactiveCat');
+      stage.className = 'garden-stage phase-knock';
       
-      stage.classList.remove('watering', 'bloomed');
-      cat.className = 'interactive-cat cat-walking'; // 觸發貓咪往前走並敲螢幕
-      
-      document.getElementById('overlayTitle').textContent = '🐱 貓貓來敲門提醒囉！';
-      document.getElementById('waterOverlaySub').textContent = '小貓：喂～該起來喝水休息囉！';
+      document.getElementById('overlayTitle').textContent = '🐱 叩、叩、叩！';
+      document.getElementById('waterOverlaySub').textContent = '小橘貓走過來敲敲螢幕叫你喝水囉！點一下畫面回應牠';
       document.getElementById('waterOverlay').classList.add('active');
     }
 
@@ -899,27 +954,32 @@
       stopContinuousChime();
 
       const stage = document.getElementById('gardenStage');
-      const cat = document.getElementById('interactiveCat');
       const subText = document.getElementById('waterOverlaySub');
       const titleText = document.getElementById('overlayTitle');
 
-      // 階段 1：貓咪轉頭看太陽與花園
-      cat.className = 'interactive-cat cat-watching';
-      titleText.textContent = '🌸 小花園開花了！';
-      subText.textContent = '💧 清水慢慢滋潤土壤，小貓開心地看著花朵～';
-      stage.classList.add('watering');
+      // 階段 2 (0.0s)：小貓退到旁邊，小花盆與花苞冒出來！
+      stage.className = 'garden-stage phase-garden';
+      titleText.textContent = '🌱 小花盆出現了！';
+      subText.textContent = '小貓退回陽光下，準備一起看小花長大...';
 
-      // 階段 2：花朵綻放 ＋ Bling 音效
+      // 階段 3 (1.1s)：水滴緩緩落下澆花
       setTimeout(() => {
-        stage.classList.add('bloomed');
+        stage.classList.add('phase-watering');
+        subText.textContent = '💧 清水慢慢滲進土壤裡，你也喝口水吧～';
+      }, 1100);
+
+      // 階段 4 (2.5s)：花朵緩慢盛開 ＋ Bling Bling 閃亮音效
+      setTimeout(() => {
+        stage.classList.add('phase-bloomed');
         playBlingBlingSound();
-        subText.textContent = '✨ 陽光暖暖的，花朵在陽光下盛開囉！';
+        titleText.textContent = '🌸✨ 開花囉！';
+        subText.textContent = '小橘貓在陽光下開心地搖著尾巴陪你看花～';
         state.flowerCount += 1;
         document.getElementById('flowerCount').textContent = state.flowerCount;
         saveState();
-      }, 2200);
+      }, 2500);
 
-      // 階段 3：收尾並關閉遮罩，回到倒數計時
+      // 階段 5 (5.8s)：完整欣賞完畢，回到主畫面繼續計時
       setTimeout(() => {
         document.getElementById('waterOverlay').classList.remove('active');
         waterRemainingSec = state.waterInterval * 60;
@@ -927,7 +987,7 @@
         isWateringAnimating = false;
         currentAlert = null;
         processQueue();
-      }, 5200);
+      }, 5800);
     }
 
     // ====== 彈性任務邏輯 ======
