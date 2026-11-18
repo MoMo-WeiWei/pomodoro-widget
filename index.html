@@ -372,7 +372,7 @@
     }
     .btn-copy:hover { background: #E5DFD7; }
 
-    /* 互動遮罩 */
+    /* 互動遮罩與彈出提醒框 */
     .overlay {
       position: fixed;
       inset: 0;
@@ -402,6 +402,14 @@
       color: var(--text-sub);
       margin-bottom: 12px;
       min-height: 18px;
+    }
+
+    .alert-btn-row {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+      justify-content: center;
+      margin-top: 12px;
     }
 
     .quote-box {
@@ -537,7 +545,7 @@
       cursor: pointer;
       position: relative;
       overflow: hidden;
-      margin-bottom: 16px;
+      margin-bottom: 12px;
     }
 
     .runner-svg { animation: runBodyBounce 0.22s infinite alternate ease-in-out; }
@@ -640,7 +648,7 @@
       </div>
     </div>
 
-    <!-- 區塊二：彈性提醒任務清單（支援預排未來日期與隨時改期） -->
+    <!-- 區塊二：彈性提醒任務清單（支援星期顯示與自動排序） -->
     <div class="card">
       <div class="card-header">
         <div class="card-title">🏃 彈性事項提醒</div>
@@ -702,7 +710,7 @@
     </div>
   </div>
 
-  <!-- 互動遮罩 1：貓咪敲螢幕 -->
+  <!-- 互動遮罩 1：貓咪敲螢幕（含延期按鈕） -->
   <div class="overlay" id="waterOverlay">
     <div class="overlay-title" id="overlayTitle">🐱 叩、叩、叩！</div>
     <div class="overlay-sub" id="waterOverlaySub">小橘貓走過來敲敲螢幕叫你喝水囉！點一下畫面回應牠</div>
@@ -791,9 +799,15 @@
     </div>
 
     <div class="quote-box" id="quoteBox">🌟 休息是為了走更長的路，而你是為了喝爆珍奶而活！</div>
+
+    <!-- 喝水提醒專用延期按鈕列 -->
+    <div class="alert-btn-row">
+      <button class="btn-ghost" onclick="postponeWaterAlert(15)">⏰ 延期 15 分鐘</button>
+      <button class="btn-sage" onclick="postponeWaterAlert(30)">⏰ 延期 30 分鐘</button>
+    </div>
   </div>
 
-  <!-- 互動遮罩 2：旋風奔跑小人提醒 -->
+  <!-- 互動遮罩 2：旋風奔跑小人提醒（含延期按鈕） -->
   <div class="overlay" id="taskOverlay">
     <div class="overlay-title" id="taskOverlayTitle">⏰ 時間到了！</div>
     <div class="overlay-sub" id="taskOverlaySub">點擊下方奔跑小人，確認處理完成</div>
@@ -818,6 +832,12 @@
           <path d="M36,74 Q52,60 68,74 Q52,88 36,74 Z" fill="#E5E0D8" opacity="0.6" />
         </g>
       </svg>
+    </div>
+
+    <!-- 彈性任務專用延期按鈕列 -->
+    <div class="alert-btn-row">
+      <button class="btn-ghost" onclick="postponeCurrentTask(15)">⏰ 延期 15 分鐘</button>
+      <button class="btn-sage" onclick="postponeCurrentTask(30)">⏰ 延期 30 分鐘</button>
     </div>
   </div>
 
@@ -920,7 +940,7 @@
       }
     }
 
-    // ====== 日期格式化與狀態管理 ======
+    // ====== 日期格式化與星期轉換 ======
     function getTodayDateString() {
       const d = new Date();
       const year = d.getFullYear();
@@ -929,10 +949,16 @@
       return `${year}-${month}-${day}`;
     }
 
+    function getWeekdayString(dateStr) {
+      const weekdays = ['週日', '週一', '週二', '週三', '週四', '週五', '週六'];
+      const d = new Date(dateStr);
+      return weekdays[d.getDay()] || '';
+    }
+
     const todayStr = getTodayDateString();
     document.getElementById('taskDateInput').value = todayStr;
 
-    let state = JSON.parse(localStorage.getItem('notion_healing_widget_v9')) || {
+    let state = JSON.parse(localStorage.getItem('notion_healing_widget_v10')) || {
       waterInterval: 45,
       flowerDate: todayStr,
       flowerCount: 0,
@@ -961,7 +987,7 @@
     }
 
     function saveState() {
-      localStorage.setItem('notion_healing_widget_v9', JSON.stringify(state));
+      localStorage.setItem('notion_healing_widget_v10', JSON.stringify(state));
     }
 
     function computeTargetFromTask(task) {
@@ -1015,7 +1041,7 @@
       }
     }
 
-    // ====== 喝水輪播 ======
+    // ====== 喝水輪播與延期功能 ======
     let waterRunning = false;
     let waterRemainingSec = state.waterInterval * 60;
 
@@ -1068,6 +1094,14 @@
       document.getElementById('waterOverlay').classList.add('active');
     }
 
+    function postponeWaterAlert(minutes) {
+      stopContinuousChime();
+      waterRemainingSec = minutes * 60;
+      document.getElementById('waterOverlay').classList.remove('active');
+      currentAlert = null;
+      processQueue();
+    }
+
     let isWateringAnimating = false;
     function triggerWatering() {
       if (isWateringAnimating) return;
@@ -1107,7 +1141,7 @@
       }, 8000);
     }
 
-    // ====== 彈性任務、隨時改期與未來預排管理 ======
+    // ====== 彈性任務、延期與自動排序管理 ======
     let editingTaskId = null;
 
     function toggleEditTask(id) {
@@ -1135,7 +1169,6 @@
       task.targetTimestamp = computeTargetFromTask(task);
       editingTaskId = null;
 
-      // 如果改到未來日期，自動幫使用者展開未來預排區方便確認
       if (task.dateStr > getTodayDateString()) {
         document.getElementById('futureSection').classList.add('expanded');
       }
@@ -1243,6 +1276,21 @@
       document.getElementById('taskOverlay').classList.add('active');
     }
 
+    function postponeCurrentTask(minutes) {
+      if (!currentAlert || currentAlert === 'water') return;
+      stopContinuousChime();
+
+      const task = currentAlert;
+      task.targetTimestamp = Date.now() + minutes * 60000;
+      task.status = 'running';
+      saveState();
+
+      document.getElementById('taskOverlay').classList.remove('active');
+      currentAlert = null;
+      renderTasks();
+      processQueue();
+    }
+
     function completeTriggeredTask() {
       if (!currentAlert || currentAlert === 'water') return;
       stopContinuousChime();
@@ -1330,7 +1378,6 @@
       return `還有 ${m} 分 ${s.toString().padStart(2, '0')} 秒`;
     }
 
-    // 產生通用的編輯改期面板 HTML
     function buildEditPanelHtml(task) {
       if (editingTaskId !== task.id) return '';
       const timeControl = task.mode === 'time'
@@ -1360,12 +1407,21 @@
 
       const now = Date.now();
       const curDateStr = getTodayDateString();
+
+      // 自動排序：無論輸入順序，將目標時間/剩餘時間最靠近的排在最上面
+      const sortedTasks = [...state.tasks].sort((a, b) => {
+        const timeA = a.targetTimestamp || (computeTargetFromTask(a));
+        const timeB = b.targetTimestamp || (computeTargetFromTask(b));
+        return timeA - timeB;
+      });
+
       let runningTodayCount = 0;
       let futureCount = 0;
 
-      state.tasks.forEach(task => {
+      sortedTasks.forEach(task => {
         const isFuture = task.dateStr && task.dateStr > curDateStr;
         const editHtml = buildEditPanelHtml(task);
+        const weekdayStr = getWeekdayString(task.dateStr);
 
         if (isFuture) {
           futureCount++;
@@ -1374,7 +1430,7 @@
           item.innerHTML = `
             <div class="task-top">
               <div class="task-info">
-                <div class="task-name">${task.name} <span class="tag-future">📅 ${task.dateStr}</span></div>
+                <div class="task-name">${task.name} <span class="tag-future">📅 ${task.dateStr} (${weekdayStr})</span></div>
                 <div class="task-countdown">預定時間：${task.mode === 'time' ? task.timeStr : task.minutes + '分鐘後'}</div>
               </div>
               <div class="task-actions">
