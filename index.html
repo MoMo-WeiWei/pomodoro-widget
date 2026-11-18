@@ -228,7 +228,6 @@
       flex-wrap: wrap;
     }
 
-    /* 星期與日期膠囊樣式（各自獨立有間距） */
     .date-badge-row {
       display: flex;
       gap: 6px;
@@ -280,7 +279,7 @@
     }
     .btn-icon:hover { background: #E5DFD7; color: var(--text-main); }
 
-    /* 任務內嵌細節/購買清單收合區 */
+    /* 多層級細項收合與巢狀結構樣式 */
     .subtask-section {
       border-top: 1px dashed var(--border-soft);
       padding-top: 6px;
@@ -299,7 +298,7 @@
     .subtask-content {
       display: none;
       flex-direction: column;
-      gap: 4px;
+      gap: 6px;
       margin-top: 6px;
       background: var(--bg-page);
       padding: 8px;
@@ -309,18 +308,53 @@
     .subtask-section.expanded .subtask-content {
       display: flex;
     }
-    .subtask-item-row {
+
+    .subtask-card {
+      background: var(--bg-input);
+      border: 1px solid var(--border-soft);
+      border-radius: 6px;
+      padding: 6px 8px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+    .subtask-main-row {
       display: flex;
       align-items: center;
       gap: 6px;
     }
-    .subtask-item-row input[type="text"] {
+    .subtask-main-row input[type="text"] {
       flex: 1;
       padding: 3px 6px;
       font-size: 12px;
       background: var(--bg-input);
     }
-    .subtask-item-row input:checked + span {
+    .subtask-main-row input:checked + span {
+      text-decoration: line-through;
+      color: var(--text-sub);
+    }
+
+    /* 巢狀子細項區塊 */
+    .nested-children-box {
+      margin-left: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      border-left: 2px solid var(--border-soft);
+      padding-left: 8px;
+    }
+    .nested-row {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .nested-row input[type="text"] {
+      flex: 1;
+      padding: 2px 5px;
+      font-size: 11.5px;
+      background: #FAF8F5;
+    }
+    .nested-row input:checked + span {
       text-decoration: line-through;
       color: var(--text-sub);
     }
@@ -369,6 +403,7 @@
       display: flex;
     }
 
+    /* 夜間複盤抽屜與已完成細項支援 */
     .reflection-card {
       background-color: var(--bg-card);
       border: 1px solid var(--border-soft);
@@ -400,8 +435,8 @@
     .log-list {
       display: flex;
       flex-direction: column;
-      gap: 6px;
-      max-height: 150px;
+      gap: 8px;
+      max-height: 220px;
       overflow-y: auto;
       background: var(--bg-input);
       border: 1px solid var(--border-soft);
@@ -412,13 +447,30 @@
     .log-item {
       font-size: 12.5px;
       display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 4px 0;
+      flex-direction: column;
+      gap: 4px;
+      padding: 6px 0;
       border-bottom: 1px dashed #F3EFEA;
     }
     .log-item:last-child { border-bottom: none; }
+    .log-item-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
     .log-time { color: var(--text-sub); font-size: 11.5px; }
+
+    /* 複盤清單內部的子細項檢視 */
+    .log-subtask-preview {
+      margin-left: 12px;
+      font-size: 11.5px;
+      color: var(--text-sub);
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+      border-left: 2px solid var(--border-soft);
+      padding-left: 6px;
+    }
 
     .btn-copy {
       background: #EFECE6;
@@ -728,7 +780,7 @@
 
       <div class="add-task-box">
         <div class="form-row">
-          <input type="text" id="taskNameInput" placeholder="輸入事項（例：餐廳比較、採買清單）" />
+          <input type="text" id="taskNameInput" placeholder="輸入事項（例：訂餐廳、採購清單）" />
         </div>
         <div class="form-row">
           <select id="taskModeSelect" onchange="toggleTimeInputMode()">
@@ -1045,7 +1097,7 @@
     const todayStr = getTodayDateString();
     document.getElementById('taskDateInput').value = todayStr;
 
-    let state = JSON.parse(localStorage.getItem('notion_healing_widget_v14')) || {
+    let state = JSON.parse(localStorage.getItem('notion_healing_widget_v15')) || {
       waterInterval: 45,
       flowerDate: todayStr,
       flowerCount: 0,
@@ -1053,8 +1105,8 @@
       completedLogs: [],
       tasks: [
         {
-          id: 'default-lunch',
-          name: '餐廳比較與預訂',
+          id: 'default-restaurant',
+          name: '訂餐廳比較與條件確認',
           mode: 'time',
           timeStr: '11:30',
           minutes: 30,
@@ -1063,8 +1115,22 @@
           status: 'running',
           targetTimestamp: null,
           subtasks: [
-            { text: 'A餐廳：氣氛好、但價位稍高', done: false },
-            { text: 'B餐廳：交通方便、有兒童座椅', done: true }
+            {
+              text: 'A 餐廳',
+              done: false,
+              children: [
+                { text: '氣氛好、適合拍照', done: false },
+                { text: '價位稍高 (一人約 1200)', done: true }
+              ]
+            },
+            {
+              text: 'B 餐廳',
+              done: false,
+              children: [
+                { text: '交通方便、有停車場', done: false },
+                { text: '有兒童座椅與餐具', done: false }
+              ]
+            }
           ]
         }
       ]
@@ -1078,7 +1144,7 @@
     }
 
     function saveState() {
-      localStorage.setItem('notion_healing_widget_v14', JSON.stringify(state));
+      localStorage.setItem('notion_healing_widget_v15', JSON.stringify(state));
     }
 
     function computeTargetFromTask(task) {
@@ -1097,6 +1163,9 @@
     state.tasks.forEach(t => {
       if (!t.dateStr) t.dateStr = todayStr;
       if (!t.subtasks) t.subtasks = [];
+      t.subtasks.forEach(sub => {
+        if (!sub.children) sub.children = [];
+      });
       if (t.status === 'running' && !t.targetTimestamp) {
         t.targetTimestamp = computeTargetFromTask(t);
       }
@@ -1266,7 +1335,7 @@
       renderTasks();
     }
 
-    // 子任務收合與增刪改
+    // 巢狀細項管理（新增後保持展開狀態）
     function toggleSubtaskDrawer(id) {
       const section = document.getElementById(`subtask-sec-${id}`);
       if (section) {
@@ -1278,9 +1347,14 @@
       const task = state.tasks.find(t => t.id === id);
       if (!task) return;
       if (!task.subtasks) task.subtasks = [];
-      task.subtasks.push({ text: '新細節項目', done: false });
+      task.subtasks.push({ text: '新增細項分類', done: false, children: [] });
       saveState();
       renderTasks();
+      // 保持展開
+      setTimeout(() => {
+        const sec = document.getElementById(`subtask-sec-${id}`);
+        if (sec) sec.classList.add('expanded');
+      }, 10);
     }
 
     function updateSubtaskText(taskId, index, val) {
@@ -1305,6 +1379,54 @@
         task.subtasks.splice(index, 1);
         saveState();
         renderTasks();
+        setTimeout(() => {
+          const sec = document.getElementById(`subtask-sec-${taskId}`);
+          if (sec) sec.classList.add('expanded');
+        }, 10);
+      }
+    }
+
+    // 子細項（第二層）新增與編輯
+    function addChildSubtask(taskId, parentIndex) {
+      const task = state.tasks.find(t => t.id === taskId);
+      if (task && task.subtasks && task.subtasks[parentIndex]) {
+        if (!task.subtasks[parentIndex].children) task.subtasks[parentIndex].children = [];
+        task.subtasks[parentIndex].children.push({ text: '新子條件/備忘', done: false });
+        saveState();
+        renderTasks();
+        setTimeout(() => {
+          const sec = document.getElementById(`subtask-sec-${taskId}`);
+          if (sec) sec.classList.add('expanded');
+        }, 10);
+      }
+    }
+
+    function updateChildText(taskId, parentIndex, childIndex, val) {
+      const task = state.tasks.find(t => t.id === taskId);
+      if (task && task.subtasks && task.subtasks[parentIndex] && task.subtasks[parentIndex].children[childIndex]) {
+        task.subtasks[parentIndex].children[childIndex].text = val;
+        saveState();
+      }
+    }
+
+    function toggleChildCheck(taskId, parentIndex, childIndex) {
+      const task = state.tasks.find(t => t.id === taskId);
+      if (task && task.subtasks && task.subtasks[parentIndex] && task.subtasks[parentIndex].children[childIndex]) {
+        task.subtasks[parentIndex].children[childIndex].done = !task.subtasks[parentIndex].children[childIndex].done;
+        saveState();
+      }
+    }
+
+    function deleteChildSubtask(taskId, parentIndex, childIndex) {
+      const task = state.tasks.find(t => t.id === taskId);
+      if (task && task.subtasks && task.subtasks[parentIndex]) {
+        task.subtasks[parentIndex].children.splice(childIndex, 1);
+        saveState();
+        renderTasks();
+        setTimeout(() => {
+          const sec = document.getElementById(`subtask-sec-${taskId}`);
+          if (sec) sec.classList.add('expanded');
+        }, 10);
       }
     }
 
@@ -1314,6 +1436,14 @@
 
     function toggleFutureDrawer() {
       document.getElementById('futureSection').classList.toggle('expanded');
+    }
+
+    // 複盤區塊中單筆紀錄的細項展開收合
+    function toggleLogSubtasks(logIndex) {
+      const box = document.getElementById(`log-subtask-box-${logIndex}`);
+      if (box) {
+        box.style.display = box.style.display === 'none' ? 'flex' : 'none';
+      }
     }
 
     function toggleTimeInputMode() {
@@ -1483,10 +1613,12 @@
         const task = state.tasks[idx];
         const nowTime = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
         
+        // 將任務及其包含的巢狀子細項完整存入複盤紀錄
         state.completedLogs.push({
           name: task.name,
           time: nowTime,
-          type: task.type === 'routine' ? '例行' : '單次'
+          type: task.type === 'routine' ? '例行' : '單次',
+          subtasks: JSON.parse(JSON.stringify(task.subtasks || []))
         });
 
         if (task.type === 'once') {
@@ -1515,11 +1647,24 @@
       }
       let textToCopy = `【今日完成任務複盤】\n`;
       state.completedLogs.forEach(log => {
+        const checkIcon = log.subtasks && log.subtasks.length > 0 ? '' : '';
         textToCopy += `- [x] ${log.name} (${log.time})\n`;
+        if (log.subtasks && log.subtasks.length > 0) {
+          log.subtasks.forEach(sub => {
+            const subCheck = sub.done ? '[x]' : '[ ]';
+            textToCopy += `  - ${subCheck} ${sub.text}\n`;
+            if (sub.children && sub.children.length > 0) {
+              sub.children.forEach(child => {
+                const childCheck = child.done ? '[x]' : '[ ]';
+                textToCopy += `    - ${childCheck} ${child.text}\n`;
+              });
+            }
+          });
+        }
       });
       
       navigator.clipboard.writeText(textToCopy).then(() => {
-        alert('✅ 已複製複盤格式！可以直接貼到 Notion 頁面中。');
+        alert('✅ 已複製含多層級細項的複盤格式！可以直接貼到 Notion 中。');
       }).catch(err => {
         console.error('複製失敗', err);
       });
@@ -1536,12 +1681,39 @@
         return;
       }
 
-      state.completedLogs.forEach(log => {
+      state.completedLogs.forEach((log, logIdx) => {
         const item = document.createElement('div');
         item.className = 'log-item';
+
+        let subtaskPreviewHtml = '';
+        if (log.subtasks && log.subtasks.length > 0) {
+          let innerHtml = '';
+          log.subtasks.forEach(sub => {
+            const checkIcon = sub.done ? '☑' : '☐';
+            innerHtml += `<div>${checkIcon} ${sub.text}</div>`;
+            if (sub.children && sub.children.length > 0) {
+              sub.children.forEach(child => {
+                const childCheck = child.done ? '☑' : '☐';
+                innerHtml += `<div style="margin-left: 14px; color: var(--text-sub);">${childCheck} ${child.text}</div>`;
+              });
+            }
+          });
+          subtaskPreviewHtml = `
+            <div style="margin-top: 2px;">
+              <span style="font-size: 11px; color: var(--accent-sage); cursor: pointer; text-decoration: underline;" onclick="toggleLogSubtasks(${logIdx})">📄 檢視細項內容</span>
+              <div id="log-subtask-box-${logIdx}" class="log-subtask-preview" style="display: none; margin-top: 4px;">
+                ${innerHtml}
+              </div>
+            </div>
+          `;
+        }
+
         item.innerHTML = `
-          <span>✅ ${log.name} <span class="tag-routine">${log.type}</span></span>
-          <span class="log-time">${log.time} 完成</span>
+          <div class="log-item-header">
+            <span>✅ ${log.name} <span class="tag-routine">${log.type}</span></span>
+            <span class="log-time">${log.time} 完成</span>
+          </div>
+          ${subtaskPreviewHtml}
         `;
         logListEl.appendChild(item);
       });
@@ -1611,15 +1783,33 @@
         const editHtml = buildEditPanelHtml(task);
         const weekdayStr = getWeekdayString(task.dateStr);
 
-        // 組合子任務 HTML
         if (!task.subtasks) task.subtasks = [];
         let subtaskItemsHtml = '';
         task.subtasks.forEach((sub, sIdx) => {
+          if (!sub.children) sub.children = [];
+          
+          let childrenHtml = '';
+          sub.children.forEach((child, cIdx) => {
+            childrenHtml += `
+              <div class="nested-row">
+                <input type="checkbox" ${child.done ? 'checked' : ''} onclick="toggleChildCheck('${task.id}', ${sIdx}, ${cIdx})" />
+                <input type="text" value="${child.text}" oninput="updateChildText('${task.id}', ${sIdx}, ${cIdx}, this.value)" placeholder="輸入子條件或細節..." />
+                <button class="btn-icon" style="padding: 1px 4px; font-size: 10px;" onclick="deleteChildSubtask('${task.id}', ${sIdx}, ${cIdx})">✕</button>
+              </div>
+            `;
+          });
+
           subtaskItemsHtml += `
-            <div class="subtask-item-row">
-              <input type="checkbox" ${sub.done ? 'checked' : ''} onclick="toggleSubtaskCheck('${task.id}', ${sIdx})" />
-              <input type="text" value="${sub.text}" oninput="updateSubtaskText('${task.id}', ${sIdx}, this.value)" placeholder="輸入細節或餐廳選項..." />
-              <button class="btn-icon" style="padding: 2px 6px; font-size: 11px;" onclick="deleteSubtask('${task.id}', ${sIdx})">✕</button>
+            <div class="subtask-card">
+              <div class="subtask-main-row">
+                <input type="checkbox" ${sub.done ? 'checked' : ''} onclick="toggleSubtaskCheck('${task.id}', ${sIdx})" />
+                <input type="text" value="${sub.text}" oninput="updateSubtaskText('${task.id}', ${sIdx}, this.value)" placeholder="輸入大分類（例：A 餐廳）..." />
+                <button class="btn-icon" style="padding: 2px 6px; font-size: 11px;" onclick="deleteSubtask('${task.id}', ${sIdx})">✕</button>
+              </div>
+              <div class="nested-children-box">
+                ${childrenHtml}
+                <button class="btn-ghost" style="padding: 2px 6px; font-size: 11px; align-self: flex-start;" onclick="addChildSubtask('${task.id}', ${sIdx})">+ 新增子細項/條件</button>
+              </div>
             </div>
           `;
         });
@@ -1627,12 +1817,12 @@
         const subtaskSectionHtml = `
           <div class="subtask-section" id="subtask-sec-${task.id}">
             <div class="subtask-toggle-header" onclick="toggleSubtaskDrawer('${task.id}')">
-              <span>📝 細項/採買清單 (${task.subtasks.length} 項)</span>
+              <span>📝 決策與細節清單 (${task.subtasks.length} 大項)</span>
               <span>▼ 展開 / 收合</span>
             </div>
             <div class="subtask-content">
               ${subtaskItemsHtml}
-              <button class="btn-ghost" style="padding: 3px 8px; font-size: 11.5px; align-self: flex-start; margin-top: 4px;" onclick="addSubtask('${task.id}')">+ 新增細節項目</button>
+              <button class="btn-ghost" style="padding: 4px 10px; font-size: 12px; align-self: flex-start; margin-top: 2px;" onclick="addSubtask('${task.id}')">+ 新增主細項</button>
             </div>
           </div>
         `;
