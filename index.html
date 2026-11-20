@@ -714,7 +714,6 @@
     }
     .runner-finished .cyclone-wheel { animation: none; opacity: 0.3; }
 
-    /* 花園圖鑑專屬 modal 樣式 */
     .garden-modal-overlay {
       position: fixed;
       inset: 0;
@@ -750,7 +749,6 @@
     <div class="card">
       <div class="card-header">
         <div class="card-title">💧 喝水療癒提醒</div>
-        <!-- 點擊此處即可打開花園圖鑑 -->
         <div class="badge" onclick="openGardenModal()" title="點擊查看今日花園圖鑑">
           🌸 今日開花：<span id="flowerCount">0</span> 朵 ▾
         </div>
@@ -821,8 +819,8 @@
         </div>
         <div class="form-row">
           <select id="taskModeSelect" onchange="toggleTimeInputMode()">
-            <option value="time">指定時間 (幾點幾分)</option>
-            <option value="interval">間隔倒數 (幾分鐘後)</option>
+            <option value="time">指定時間</option>
+            <option value="interval">倒數計時</option>
           </select>
           <input type="time" id="taskTimeInput" value="11:30" />
           <input type="number" id="taskMinutesInput" value="30" min="1" max="720" style="display: none; width: 75px;" />
@@ -834,10 +832,10 @@
         </div>
         <div class="form-row" style="justify-content: space-between;">
           <select id="taskTypeSelect">
-            <option value="routine">🔁 例行公事 (完成後保留)</option>
-            <option value="once">⚡ 一次性任務 (完成後自動消失)</option>
+            <option value="routine">🔁 例行公事</option>
+            <option value="once">⚡ 一次性任務</option>
           </select>
-          <button class="btn-terracotta" onclick="addTask()">+ 加入任務</button>
+          <button class="btn-terracotta" onclick="addTask()">＋</button>
         </div>
       </div>
 
@@ -854,18 +852,17 @@
       </div>
     </div>
 
-    <!-- 區塊三：夜間複盤紀錄抽屜 -->
+    <!-- 區塊三：已完成任務紀錄抽屜 -->
     <div class="reflection-card" id="reflectionCard">
       <div class="reflection-header" onclick="toggleReflectionDrawer()">
-        <div class="card-title" style="margin-bottom:0;">🌙 今日已完成任務（複盤專用）</div>
-        <div class="badge" id="logCountBadge" style="cursor:default;">0 項已完成</div>
+        <div class="card-title" style="margin-bottom:0;">🌙 今日已完成</div>
+        <div class="badge" id="logCountBadge" style="cursor:default;">0 項完成</div>
       </div>
       <div class="reflection-content">
-        <div style="font-size: 12px; color: var(--text-sub);">晚上寫 Notion 複盤時，可直接複製以下完成紀錄：</div>
         <div class="log-list" id="logList">
           <div style="text-align: center; color: var(--text-sub); font-size: 12px; padding: 10px;">今天還沒有完成的任務喔！加油～</div>
         </div>
-        <button class="btn-copy" onclick="copyLogsForNotion()">📋 一鍵複製複盤格式</button>
+        <button class="btn-copy" onclick="copyLogsForNotion()">📋 一鍵複製</button>
       </div>
     </div>
   </div>
@@ -876,14 +873,10 @@
       <div style="font-size: 17px; font-weight: 700; margin-bottom: 2px;" id="gardenModalTitle">🌸 今日療癒花園</div>
       <div style="font-size: 12.5px; color: var(--text-sub); margin-bottom: 10px;" id="gardenModalSub">已收集 0 朵花</div>
       
-      <!-- 動態整株花園 SVG 畫布 -->
       <div style="width: 260px; height: 180px; background: #FFFDF8; border: 1.5px solid var(--border-soft); border-radius: 16px; display: flex; align-items: center; justify-content: center; position: relative; overflow: hidden; margin-bottom: 10px;">
-        <svg width="260" height="180" viewBox="0 0 260 180" id="gardenSvgCanvas">
-          <!-- 這裡會依據花朵數量動態生成莖葉與花朵 -->
-        </svg>
+        <svg width="260" height="180" viewBox="0 0 260 180" id="gardenSvgCanvas"></svg>
       </div>
 
-      <!-- 動態鼓勵語 -->
       <div style="font-size: 13px; font-weight: 500; color: #7A6E65; background: #F9F5EC; border: 1px dashed #D4C5B9; border-radius: 10px; padding: 8px 12px; margin-bottom: 12px; width: 100%; line-height: 1.4;" id="gardenEncourageText">
         🌱 播種中，期待第一朵小花冒出來～
       </div>
@@ -1031,6 +1024,9 @@
   </div>
 
   <script>
+    // ====== 雲端同步設定區（選填：填入 Firebase Realtime Database 網址即可跨裝置同步）======
+    const CLOUD_SYNC_URL = ""; // 例如："https://你的專案-default-rtdb.firebaseio.com/momo_widget.json"
+
     const energyQuotes = [
       "🌸 溫馨：喝口水，深呼吸，你已經做得比想像中還要好了。",
       "🔥 勵志：乾掉這杯水，宇宙的奧祕就由你來解開！",
@@ -1137,6 +1133,11 @@
       return `${year}-${month}-${day}`;
     }
 
+    function getChineseFormattedDate(dateStr) {
+      const [yy, mo, dd] = dateStr.split('-');
+      return `${yy}年${Number(mo)}月${Number(dd)}日`;
+    }
+
     function getNextDateString(dateStr) {
       const [yy, mo, dd] = dateStr.split('-').map(Number);
       const d = new Date(yy, mo - 1, dd);
@@ -1156,7 +1157,7 @@
     const todayStr = getTodayDateString();
     document.getElementById('taskDateInput').value = todayStr;
 
-    let state = JSON.parse(localStorage.getItem('notion_healing_widget_v18')) || {
+    let state = JSON.parse(localStorage.getItem('notion_healing_widget_v19')) || {
       waterInterval: 45,
       flowerDate: todayStr,
       flowerCount: 0,
@@ -1173,7 +1174,30 @@
     }
 
     function saveState() {
-      localStorage.setItem('notion_healing_widget_v18', JSON.stringify(state));
+      localStorage.setItem('notion_healing_widget_v19', JSON.stringify(state));
+      if (CLOUD_SYNC_URL) {
+        fetch(CLOUD_SYNC_URL, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(state)
+        }).catch(() => {});
+      }
+    }
+
+    async function pullCloudState() {
+      if (!CLOUD_SYNC_URL) return;
+      try {
+        const res = await fetch(CLOUD_SYNC_URL);
+        if (!res.ok) return;
+        const remote = await res.json();
+        if (remote && Array.isArray(remote.tasks)) {
+          state = remote;
+          localStorage.setItem('notion_healing_widget_v19', JSON.stringify(state));
+          updateFlowerDisplay();
+          renderTasks();
+          renderReflectionLogs();
+        }
+      } catch (e) {}
     }
 
     function updateFlowerDisplay() {
@@ -1181,13 +1205,11 @@
     }
     updateFlowerDisplay();
 
-    // ====== 花園圖鑑互動彈窗控制 ======
     function openGardenModal() {
       unlockAudio();
       const count = state.flowerCount;
       document.getElementById('gardenModalSub').textContent = `今日已收集 ${count} 朵花`;
       
-      // 根據花朵數量決定鼓勵語
       let encourageMsg = "";
       if (count === 0) {
         encourageMsg = "🌱 播種中，期待第一朵小花冒出來～喝水幫它補充養分吧！";
@@ -1199,10 +1221,7 @@
         encourageMsg = "✨ 哇～是美麗花園！繁花盛開，你今天真的超級厲害！";
       }
       document.getElementById('gardenEncourageText').textContent = encourageMsg;
-
-      // 動態生成整株花園 SVG
       renderGardenSvg(count);
-
       document.getElementById('gardenModal').classList.add('active');
     }
 
@@ -1212,7 +1231,6 @@
 
     function renderGardenSvg(count) {
       const svg = document.getElementById('gardenSvgCanvas');
-      // 花盆與土壤底座固定
       let svgContent = `
         <ellipse cx="130" cy="155" rx="36" ry="7" fill="#D5C5B5" opacity="0.6" />
         <polygon points="98,118 162,118 154,152 106,152" fill="#D48C70" />
@@ -1221,7 +1239,6 @@
       `;
 
       if (count === 0) {
-        // 0朵：顯示花苞與土堆
         svgContent += `
           <path d="M130,110 Q124,85 130,62" stroke="#7A947E" stroke-width="4.5" fill="none" stroke-linecap="round" />
           <path d="M128,92 Q105,82 103,94 Q115,102 128,94" fill="#8FA893" />
@@ -1229,25 +1246,20 @@
           <path d="M123,64 Q130,48 137,64 Q130,68 123,64 Z" fill="#E6B88A" />
         `;
       } else {
-        // 主幹
-        svgContent += `<path d="M130,110 Q125,80 130,50" stroke="#7A947E" stroke-width="4.5" fill="none" stroke-linecap="round" />`;
-
-        // 葉子
         svgContent += `
+          <path d="M130,110 Q125,80 130,50" stroke="#7A947E" stroke-width="4.5" fill="none" stroke-linecap="round" />
           <path d="M128,92 Q102,80 100,92 Q112,102 128,94" fill="#8FA893" />
           <path d="M130,78 Q158,68 160,80 Q148,92 130,84" fill="#8FA893" />
         `;
 
-        // 根據開花數量 (1 ~ count) 在不同位置長出美麗花朵
-        // 座標預設分佈在頂部與兩側枝芽
         const positions = [
-          { x: 130, y: 38, scale: 1.0 }, // 第 1 朵：正上方
-          { x: 98,  y: 55, scale: 0.85 }, // 第 2 朵：左側
-          { x: 162, y: 55, scale: 0.85 }, // 第 3 朵：右側
-          { x: 114, y: 22, scale: 0.75 }, // 第 4 朵：左上方
-          { x: 146, y: 22, scale: 0.75 }, // 第 5 朵：右上方
-          { x: 80,  y: 75, scale: 0.65 }, // 第 6 朵：左下方
-          { x: 180, y: 75, scale: 0.65 }, // 第 7 朵：右下方
+          { x: 130, y: 38, scale: 1.0 },
+          { x: 98,  y: 55, scale: 0.85 },
+          { x: 162, y: 55, scale: 0.85 },
+          { x: 114, y: 22, scale: 0.75 },
+          { x: 146, y: 22, scale: 0.75 },
+          { x: 80,  y: 75, scale: 0.65 },
+          { x: 180, y: 75, scale: 0.65 },
         ];
 
         for (let i = 0; i < Math.min(count, positions.length); i++) {
@@ -1272,11 +1284,8 @@
           `;
         }
 
-        // 如果超過 7 朵，額外在旁邊顯示閃爍特效與數字標示
         if (count > 7) {
-          svgContent += `
-            <text x="130" y="15" font-size="12" font-weight="bold" fill="#D48C70" text-anchor="middle">✨ +${count - 7} 朵繁花盛開！</text>
-          `;
+          svgContent += `<text x="130" y="15" font-size="12" font-weight="bold" fill="#D48C70" text-anchor="middle">✨ +${count - 7} 朵繁花盛開！</text>`;
         }
       }
 
@@ -1770,13 +1779,14 @@
       }, 700);
     }
 
-    // 含有防止 Notion 桌面版剪貼簿卡死的備用複製框機制
+    // 調整後的複製格式：顯示「YYYY年MM月DD日 完成任務」，移除「今日」與「覆盤」
     function copyLogsForNotion() {
       if (!state.completedLogs || state.completedLogs.length === 0) {
         alert('目前還沒有完成的任務可以複製喔！');
         return;
       }
-      let textToCopy = `【今日完成任務複盤】\n`;
+      const dateLabel = getChineseFormattedDate(getTodayDateString());
+      let textToCopy = `【${dateLabel} 完成任務】\n`;
       state.completedLogs.forEach(log => {
         textToCopy += `- [x] ${log.name} (${log.time})\n`;
         if (log.subtasks && log.subtasks.length > 0) {
@@ -1794,18 +1804,17 @@
       });
       
       navigator.clipboard.writeText(textToCopy).then(() => {
-        alert('✅ 已複製複盤格式！可以直接貼到 Notion 中。');
+        alert('✅ 已複製！可以直接貼到 Notion 中。');
       }).catch(err => {
-        // Notion 桌面版沙盒防呆備用彈窗
         let textarea = document.createElement('textarea');
         textarea.value = textToCopy;
         document.body.appendChild(textarea);
         textarea.select();
         try {
           document.execCommand('copy');
-          alert('✅ 已透過備用機制複製複盤格式！');
+          alert('✅ 已複製！可以直接貼到 Notion 中。');
         } catch (e) {
-          prompt('由於 Notion 桌面版限制，請手動複製下方文字：', textToCopy);
+          prompt('請手動複製下方文字：', textToCopy);
         }
         document.body.removeChild(textarea);
       });
@@ -1815,7 +1824,7 @@
       const logListEl = document.getElementById('logList');
       const logCountBadge = document.getElementById('logCountBadge');
       logListEl.innerHTML = '';
-      logCountBadge.textContent = `${state.completedLogs.length} 項已完成`;
+      logCountBadge.textContent = `${state.completedLogs.length} 項完成`;
 
       if (state.completedLogs.length === 0) {
         logListEl.innerHTML = `<div style="text-align: center; color: var(--text-sub); font-size: 12px; padding: 10px;">今天還沒有完成的任務喔！加油～</div>`;
@@ -2060,6 +2069,7 @@
     }
 
     renderReflectionLogs();
+    pullCloudState();
 
     setInterval(() => {
       if (waterRunning) {
@@ -2103,6 +2113,8 @@
         }
       });
     }, 1000);
+
+    setInterval(pullCloudState, 8000);
 
     renderTasks();
   </script>
