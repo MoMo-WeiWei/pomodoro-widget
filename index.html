@@ -815,7 +815,7 @@
 
       <div class="add-task-box">
         <div class="form-row">
-          <input type="text" id="taskNameInput" placeholder="輸入事項（例：訂餐廳、採購清單）" />
+          <input type="text" id="taskNameInput" placeholder="輸入事項（例：購物清單、訂中餐）" />
         </div>
         <div class="form-row">
           <select id="taskModeSelect" onchange="toggleTimeInputMode()">
@@ -1028,16 +1028,16 @@
     const CLOUD_SYNC_URL = ""; // 例如："https://你的專案-default-rtdb.firebaseio.com/momo_widget.json"
 
     const energyQuotes = [
-      "🌸 溫馨：喝口水，深呼吸，你已經做得比想像中還要好了。",
-      "🔥 勵志：乾掉這杯水，宇宙的奧祕就由你來解開！",
-      "🐱 可愛：本貓批准你休息三分鐘，趕快乖乖喝水！",
-      "🤪 搞笑：多喝水能讓腦子裡的裝水率下降，維持清醒（？）",
-      "⚡ 中二：區區地心引力和疲勞，休想封印本大人的無敵覺醒之力！",
-      "☕ 溫馨：世間萬物皆苦，但你的水是甜的（記得加糖或多喝兩口）。",
-      "🚀 勵志：今日的偷懶是為了明日更好的躺平，先喝水再說！",
-      "🐾 可愛：小橘貓用肉球跟你打勾勾，要記得照顧好自己喔～",
-      "🤡 搞笑：只要我喝水夠快，截止線就追不上我！",
-      "🌌 中二：沉睡的能量核心啊，藉由清澈的水流解開這道封印吧！"
+      "🌸 ：喝口水，深呼吸，你已經做得比想像中還要好了。",
+      "🔥 ：乾掉這杯水，宇宙的奧祕就由你來解開！",
+      "🐱 ：本貓批准你休息三分鐘，趕快乖乖喝水！",
+      "🤪 ：多喝水能讓腦子裡的裝水率下降，維持清醒（？）",
+      "⚡ ：區區地心引力和疲勞，休想封印本大人的無敵覺醒之力！",
+      "☕ ：世間萬物皆苦，但你的水是甜的（記得加糖或多喝兩口）。",
+      "🚀 ：今日的偷懶是為了明日更好的躺平，先喝水再說！",
+      "🐾 ：小橘貓用肉球跟你打勾勾，要記得照顧好自己喔～",
+      "🤡 ：只要我喝水夠快，截止線就追不上我！",
+      "🌌 ：沉睡的能量核心啊，藉由清澈的水流解開這道封印吧！"
     ];
 
     function getRandomQuote() {
@@ -1716,7 +1716,7 @@
       const newTime = document.getElementById('alertCustomTime').value;
 
       if (!newDate) {
-        alert('請選擇要延期到的目標日期喔！');
+        alert('請選擇要後延的目標日期喔！');
         return;
       }
 
