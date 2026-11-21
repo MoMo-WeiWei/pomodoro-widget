@@ -1785,7 +1785,13 @@
         alert('目前還沒有完成的任務可以複製喔！');
         return;
       }
-      const dateLabel = getChineseFormattedDate(getTodayDateString());
+
+      const rawDate = getTodayDateString();
+      const parts = rawDate.split('-');
+      const dateLabel = parts.length === 3
+        ? `${parts[0]}/${parts[1]}/${parts[2]}`
+        : rawDate;
+
       let textToCopy = `【${dateLabel} 完成任務】\n`;
       state.completedLogs.forEach(log => {
         textToCopy += `- [x] ${log.name} (${log.time})\n`;
@@ -1802,6 +1808,51 @@
           });
         }
       });
+
+      function openManualCopyModal() {
+        let modal = document.getElementById('manualCopyModal');
+        if (!modal) {
+          modal = document.createElement('div');
+          modal.id = 'manualCopyModal';
+          modal.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,0.45);display:flex;align-items:center;justify-content:center;z-index:300;padding:16px;';
+          modal.innerHTML = `
+            <div style="background:#FAF8F5;border:1px solid #E5E0D8;border-radius:16px;padding:16px;width:100%;max-width:340px;display:flex;flex-direction:column;gap:10px;box-shadow:0 10px 25px rgba(0,0,0,0.15);">
+              <div style="font-size:14px;font-weight:700;color:#4A4641;">📋 複製完成紀錄</div>
+              <div style="font-size:12px;color:#8C857B;">已幫你全選文字，按 Ctrl+C（Mac 為 Cmd+C）即可複製：</div>
+              <textarea id="manualCopyTextarea" rows="8" style="width:100%;border:1px solid #E5E0D8;border-radius:8px;padding:8px;font-size:12px;color:#4A4641;background:#FFFFFF;resize:none;"></textarea>
+              <div style="display:flex;gap:8px;justify-content:flex-end;">
+                <button onclick="document.getElementById('manualCopyModal').style.display='none'" style="padding:6px 12px;border-radius:8px;border:1px solid #E5E0D8;background:#FFFFFF;color:#4A4641;cursor:pointer;">關閉</button>
+                <button id="manualCopySelectBtn" style="padding:6px 12px;border-radius:8px;border:none;background:#8FA893;color:#FFFFFF;cursor:pointer;">全選文字</button>
+              </div>
+            </div>
+          `;
+          document.body.appendChild(modal);
+          document.getElementById('manualCopySelectBtn').onclick = function () {
+            const ta = document.getElementById('manualCopyTextarea');
+            ta.focus();
+            ta.select();
+            try { document.execCommand('copy'); } catch (e) {}
+          };
+        }
+        const ta = document.getElementById('manualCopyTextarea');
+        ta.value = textToCopy;
+        modal.style.display = 'flex';
+        setTimeout(() => {
+          ta.focus();
+          ta.select();
+        }, 50);
+      }
+
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(textToCopy).then(() => {
+          alert('✅ 已複製！可以直接貼到 Notion 中。');
+        }).catch(() => {
+          openManualCopyModal();
+        });
+      } else {
+        openManualCopyModal();
+      }
+    }
       
       navigator.clipboard.writeText(textToCopy).then(() => {
         alert('✅ 已複製！可以直接貼到 Notion 中。');
